@@ -353,6 +353,38 @@ send(&quot;tell &quot;..ply..&quot; &quot;..cyphertext)</script>
                     <packageName></packageName>
                     <regex>^jpet (\w+) (.+)$</regex>
                 </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Encrypted Tell 2</name>
+                    <script>local ply = string.lower(matches[2])
+local key = JPPlayerDB:get(ply, &quot;password&quot;)
+
+if not key then echo(&quot;Password not set for &quot;..ply..&quot;\n&quot;);return end
+
+
+local enc_state = JPRC4_new(key)
+enc_state:generate(3072)
+local ciphertext = enc_state:cipher(matches[3])
+echo(&quot;hi\n&quot;)
+local cyphertext = JP_enc(ciphertext)
+
+cyphertext = &quot;@~!&quot;..cyphertext..&quot;!~@&quot;
+
+send(&quot;tell &quot;..ply..&quot; &quot;..cyphertext)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^\.(\w+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Download player</name>
+                    <script>local ply = string.lower(matches[2])
+ply = string.title(ply)
+downloadFile(getMudletHomeDir()..&quot;/&quot;..ply..&quot;_JP.html&quot;, &quot;http://www.imperian.com/game/honors/Imperian/&quot;..ply)
+
+echo(&quot;Downloading &quot;..ply..&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp download (\w+)$</regex>
+                </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
                 <name>Bashing</name>
@@ -548,10 +580,12 @@ echo(&quot;Quest actions cleared\n&quot;)</script>
 JPPlayerDB.data = {}
 JPAreaDB.data = {}
 JPRoomDB.data = {}
+JPThingDB.data = {}
 JPSettingsDB:load()
 JPPlayerDB:load()
 JPAreaDB:areaLoad() -- special
 JPRoomDB:load()
+JPThingDB:load()
 echo(&quot;Done\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
@@ -562,7 +596,9 @@ echo(&quot;Done\n&quot;)</script>
                     <script>JPSettingsDB:save()
 JPPlayerDB:save()
 JPAreaDB:save()
-JPRoomDB:save()</script>
+JPRoomDB:save()
+JPThingDB:save()
+echo(&quot;Done.\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp save all$</regex>
@@ -615,16 +651,6 @@ end
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp load msg( confirm)?$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Reset all databases</name>
-                    <script>JPSettingsDB = JPDB:new({name = &quot;settings.jpdb&quot;})
-JPPlayerDB = JPDB:new({name = &quot;player.jpdb&quot;})
-JPAreaDB = JPDB:new({name = &quot;area.jpdb&quot;})
-JPRoomDB = JPDB:new({name = &quot;room.jpdb&quot;})</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^jp nuke it all$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -892,6 +918,7 @@ function JP_onLoad()
 	JPPlayerDB:load()
 	JPAreaDB:areaLoad() -- special
 	JPRoomDB:load()
+	JPThingDB:load()
 end
 
 function JP_onExit()
@@ -899,10 +926,74 @@ function JP_onExit()
 	JPPlayerDB:save()
 	JPAreaDB:save()
 	JPRoomDB:save()
+	JPThingDB:save()
 end
 
 registerAnonymousEventHandler(&quot;sysLoadEvent&quot;, &quot;JP_onLoad&quot;)
 registerAnonymousEventHandler(&quot;sysExitEvent&quot;, &quot;JP_onExit&quot;)</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>download</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+function JP_website_download_done(_, filename)
+	--echo(&quot;Downloaded file &quot;..filename..&quot;\n&quot;)
+	if not filename:match(&quot;_JP.html&quot;, 1, true) then return end
+  -- parse our downloaded file for the player count
+	local file = io.open(filename)
+	local s = file:read(&quot;*all&quot;)
+	file:close()
+	os.remove(filename)
+
+
+	local pc = string.match(s,[[&lt;div id=&quot;content.area&quot;&gt;(.-)&lt;/div&gt;]])
+	local name = string.match(pc, &quot;Name: (.-)&lt;&quot;)
+	local city = string.match(pc, &quot;City: (.-)&lt;&quot;)
+	local guild= string.match(pc, &quot;Guild: (.-)&lt;&quot;)
+	local level= string.match(pc, &quot;Level: (.-)&lt;&quot;)
+	local prof = string.match(pc, &quot;Profession: (.-)&lt;&quot;)
+	local kills= string.match(pc, &quot;Player kills: (.-)&lt;&quot;)
+	local death= string.match(pc, &quot;Deaths: (.-)&lt;&quot;)
+
+	if not name or not level then return end
+
+	city = tostring(city)
+	guild = tostring(guild)
+	level = tostring(level)
+	prof = tostring(prof)
+	kills = tostring(kills)
+	death = tostring(death)
+
+	name = string.lower(name)
+	city = string.lower(city)
+	guild = string.lower(guild)
+	level = string.lower(level)
+	prof = string.lower(prof)
+	kills = string.lower(kills)
+	death = string.lower(death)
+
+	local stat_table = JPPlayerDB:get(name, &quot;stats&quot;) or {}
+
+	stat_table.city = city
+	stat_table.guild = guild
+	stat_table.level = level
+	stat_table.profession = prof
+	stat_table.kills = kills
+	stat_table.deaths = death
+	
+	JPPlayerDB:set(name, &quot;stats&quot;, stat_table)
+
+	echo(&quot;Parsed &quot;..name..&quot;.\n&quot;)
+
+end
+
+registerAnonymousEventHandler(&quot;sysDownloadDone&quot;, &quot;JP_website_download_done&quot;)</script>
                     <eventHandlerList/>
                 </Script>
             </ScriptGroup>
@@ -1158,6 +1249,36 @@ function JP_quest_now()
 end</script>
                     <eventHandlerList/>
                 </Script>
+                <Script isActive="no" isFolder="no">
+                    <name>Thing Script</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+function JP_thing_now()
+	local number, data
+	--echo(&quot;Get yes.\n&quot;)
+	for number, data in pairs(mobDB.inRoom) do
+		if data.attrib == &quot;t&quot; then
+			local name = data.name
+			--echo(&quot;N: &quot;..name..&quot; get &quot;..tostring(mobDB.getThingStat(name, &quot;get_here&quot;))..&quot;\n&quot;)
+			if eqbal == true and count == 0 and mobDB.getThingStat(name, &quot;get_here&quot;) == &quot;yes&quot; then
+				send(&quot;get &quot;..number)
+				eqbal = false
+			--table.insert(bash, {name = name,number=number})
+				--send(&quot;smite &quot;..number)
+				--eqbal = false
+				--bash = true
+			end
+		end
+	end
+
+
+end</script>
+                    <eventHandlerList/>
+                </Script>
             </ScriptGroup>
             <ScriptGroup isActive="yes" isFolder="yes">
                 <name>data</name>
@@ -1365,14 +1486,11 @@ function JPAreaDB:newArea(num)
 end
 
 function JPAreaDB:areaLoad()
-	echo(&quot;JPAreaLoad\n&quot;)
 	self:load()
-	display(JPAreaDB)
 	self:refreshData()
 end
 
 function JPAreaDB:refreshData()
-	echo(&quot;RefreshData&quot;)
 	for k, v in pairs(self.data) do
 		self:set(k, &quot;mobs&quot;, JPDB:new(v.mobs))
 		self:set(k, &quot;quests&quot;, JPDB:new(v.quests))
@@ -1640,6 +1758,28 @@ end
 </script>
                     <eventHandlerList/>
                 </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Thing Database</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+JPThingDB = JPThingDB or JPDB:new({name = &quot;thing.jpdb&quot;})</script>
+                    <eventHandlerList/>
+                </Script>
+            </ScriptGroup>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>players</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
             </ScriptGroup>
         </ScriptGroup>
     </ScriptPackage>
