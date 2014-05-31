@@ -173,7 +173,30 @@ deselect()
             </TriggerGroup>
         </TriggerGroup>
     </TriggerPackage>
-    <TimerPackage/>
+    <TimerPackage>
+        <TimerGroup isActive="yes" isFolder="yes" isTempTimer="no" isOffsetTimer="no">
+            <name>JP Engine</name>
+            <script></script>
+            <command></command>
+            <packageName></packageName>
+            <time>00:00:00.000</time>
+            <TimerGroup isActive="yes" isFolder="yes" isTempTimer="no" isOffsetTimer="no">
+                <name>Replicas</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <time>00:00:00.000</time>
+                <Timer isActive="yes" isFolder="no" isTempTimer="no" isOffsetTimer="no">
+                    <name>Update Inventory</name>
+                    <script>sendGMCP(&quot;Char.Items.Inv&quot;)
+send(&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <time>00:02:00.000</time>
+                </Timer>
+            </TimerGroup>
+        </TimerGroup>
+    </TimerPackage>
     <AliasPackage>
         <AliasGroup isActive="yes" isFolder="yes">
             <name>JP Engine</name>
@@ -652,6 +675,13 @@ end
                     <packageName></packageName>
                     <regex>^jp load msg( confirm)?$</regex>
                 </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Test</name>
+                    <script></script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex></regex>
+                </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
                 <name>Talking</name>
@@ -719,6 +749,12 @@ function JP_item_list()
 		local item
 		for item = 1, #items do
 			JPTables.inRoom.Replicas[items[item].id] = items[item]
+		end
+	elseif gmcp.Char.Items.List.location == &quot;inv&quot; then
+		JPTables.inInv = {}
+		local item
+		for item = 1, #items do
+			JPTables.inInv[items[item].id] = items[item]
 		end		
 	end
 end
@@ -726,12 +762,16 @@ end
 function JP_add_item()
 	if gmcp.Char.Items.Add.location == &quot;room&quot; then
 		JPTables.inRoom.Replicas[gmcp.Char.Items.Add.item.id] = gmcp.Char.Items.Add.item	
+	elseif gmcp.Char.Items.Add.location == &quot;inv&quot; then	
+		JPTables.inInv[gmcp.Char.Items.Add.item.id] = gmcp.Char.Items.Add.item
 	end
 end
 
 function JP_remove_item()
 	if gmcp.Char.Items.Remove.location == &quot;room&quot; then
 		JPTables.inRoom.Replicas[gmcp.Char.Items.Remove.item.id] = nil
+	elseif gmcp.Char.Items.Remove.location == &quot;inv&quot; then
+		JPTables.inInv[gmcp.Char.Items.Remove.item.id] = nil
 	end
 end
 
@@ -815,6 +855,9 @@ function JP_onPrompt()
 	-- Initial Check for eq, bal, no prone or stun
 	if not eqbal or prone or stun then return end
 
+	-- Check for delay
+	if JPTables.delay == &quot;yes&quot; then return end
+
 	-- Count Players
 	local ply, data, count
 
@@ -838,12 +881,18 @@ function JP_onPrompt()
 	-- Queued Actions
 	if JPList.isempty(JP_eqbalqueue) == false then
 		expandAlias(JPList.popright(JP_eqbalqueue))
+		JPTables.delay=&quot;yes&quot;
+		tempTimer(.2, [[JPTables.delay=&quot;no&quot;;raiseEvent(&quot;JP_onPrompt&quot;)]])
 		return
 	end
 
 	-- Bashing Actions
 	if JPSettingsDB:get(&quot;active&quot;, &quot;bash&quot;) == &quot;yes&quot; and count.bash == 0 then
-		if JP_bash_now() then return end
+		if JP_bash_now() then 
+			JPTables.delay=&quot;yes&quot;
+			tempTimer(.2, [[JPTables.delay=&quot;no&quot;;raiseEvent(&quot;JP_onPrompt&quot;)]])
+			return 
+		end
 	end
 
 	-- Questing Actions
@@ -1237,9 +1286,22 @@ function JP_quest_now()
 			local acts = questDB:get(number, &quot;quest_action&quot;) or {}
 			local act
 			for act = 1, #acts do
-				List.pushleft(JP_eqbalqueue, acts[act])
-				cecho(&quot;&lt;green:black&gt;Queued &quot;..acts[act]..&quot;&lt;reset&gt;\n&quot;)
+
+				if acts[act]:sub(1,2) == &quot;//&quot; then
+					local cmd = acts[act]:sub(3,-1)
+					--echo(&quot;DO: &quot;..cmd..&quot;\n&quot;)
+					local f,e = loadstring(cmd)
+					if not f then 
+						echo(&quot;Error: &quot;..e..&quot;\n&quot;)
+					else
+						f()
+					end
+
+				else
+					List.pushleft(JP_eqbalqueue, acts[act])
+					cecho(&quot;&lt;green:black&gt;Queued &quot;..acts[act]..&quot;&lt;reset&gt;\n&quot;)
 				--expandAlias(acts[act])
+				end
 				quest = true
 			end
 		end
@@ -1386,6 +1448,7 @@ JPTables = JPTables or {}
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
+JPTables.inInv = JPTables.inInv or {}
 JPTables.walkList = JPTables.walkList or {}
 JPTables.movement = JPTables.movement or {}
 JPTables.messages = JPTables.messages or {}
@@ -1780,6 +1843,45 @@ JPThingDB = JPThingDB or JPDB:new({name = &quot;thing.jpdb&quot;})</script>
 -------------------------------------------------
 </script>
                 <eventHandlerList/>
+            </ScriptGroup>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>helpers</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
+                <Script isActive="yes" isFolder="no">
+                    <name>jpf</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+jpf = jpf or {}
+
+function jpf.itemInInv(num)
+	if not num then return false end
+	num = tonumber(num)
+	if not num then return false end
+
+	num = tostring(num)
+
+	if not JPTables.inInv[num] then return false end
+	return true
+end
+
+function jpf.queue(thing)
+	List.pushleft(JP_eqbalqueue, thing)
+	cecho(&quot;&lt;green:black&gt;Queued &quot;..thing..&quot;&lt;reset&gt;\n&quot;)
+end</script>
+                    <eventHandlerList/>
+                </Script>
             </ScriptGroup>
         </ScriptGroup>
     </ScriptPackage>
