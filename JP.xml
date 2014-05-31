@@ -1,0 +1,1647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MudletPackage>
+<MudletPackage version="1.0">
+    <TriggerPackage>
+        <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+            <name>JP Engine</name>
+            <script></script>
+            <triggerType>0</triggerType>
+            <conditonLineDelta>0</conditonLineDelta>
+            <mStayOpen>0</mStayOpen>
+            <mCommand></mCommand>
+            <packageName></packageName>
+            <mFgColor>#ff0000</mFgColor>
+            <mBgColor>#ffff00</mBgColor>
+            <mSoundFile></mSoundFile>
+            <colorTriggerFgColor>#000000</colorTriggerFgColor>
+            <colorTriggerBgColor>#000000</colorTriggerBgColor>
+            <regexCodeList/>
+            <regexCodePropertyList/>
+            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>Basic</name>
+                <script></script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList/>
+                <regexCodePropertyList/>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>is Prompt</name>
+                    <script>raiseEvent(&quot;JP_onPrompt&quot;)</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>return isPrompt()</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>4</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+            </TriggerGroup>
+            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>General</name>
+                <script></script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList/>
+                <regexCodePropertyList/>
+                <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Message Area</name>
+                    <script></script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList/>
+                    <regexCodePropertyList/>
+                    <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                        <name>Base64 Msg Begin</name>
+                        <script>echo(&quot;\nFirst line match.\n&quot;)
+--echo(&quot;Matched: &quot;..matches[2]..&quot;\n&quot;)
+
+display(JP_dec(matches[2]))
+
+JPTables.messages.base64 = matches[2]
+JPTables.messages.pickled = JP_dec(matches[2])
+
+echo(&quot;Received data message. Use JP LOAD MSG to replace your current area data.\n&quot;)
+</script>
+                        <triggerType>0</triggerType>
+                        <conditonLineDelta>0</conditonLineDelta>
+                        <mStayOpen>0</mStayOpen>
+                        <mCommand></mCommand>
+                        <packageName></packageName>
+                        <mFgColor>#ff0000</mFgColor>
+                        <mBgColor>#ffff00</mBgColor>
+                        <mSoundFile></mSoundFile>
+                        <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                        <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                        <regexCodeList>
+                            <string>^&quot;\*\*\*%#([a-zA-Z0-9/+=]+)#%\*\*\*.&quot;$</string>
+                        </regexCodeList>
+                        <regexCodePropertyList>
+                            <integer>1</integer>
+                        </regexCodePropertyList>
+                    </Trigger>
+                </TriggerGroup>
+            </TriggerGroup>
+            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>Talking</name>
+                <script></script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList/>
+                <regexCodePropertyList/>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Encrypted Tell</name>
+                    <script>local ply = string.lower(matches[2])
+--echo(&quot;Encrypted Tell from &quot;..ply..&quot;\n&quot;)
+--echo(&quot;Message: &quot;..matches[4]..&quot;\n&quot;)
+
+local key = JPPlayerDB:get(ply, &quot;password&quot;)
+if not key then echo(&quot;Password not set for &quot;..ply..&quot;\n&quot;);return end
+
+local bdecct = JP_dec(matches[4])
+--
+local dec_state = JPRC4_new(key)
+dec_state:generate(3072)
+local plaintext = dec_state:cipher(bdecct)
+
+selectCaptureGroup(3)
+replace(plaintext)
+fg(&quot;PaleGoldenrod&quot;)
+resetFormat()
+
+deselect()
+
+
+</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>(\w+) tells you, &quot;(@~!([a-zA-Z0-9/=+]+)!~@\.)&quot;</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+            </TriggerGroup>
+        </TriggerGroup>
+    </TriggerPackage>
+    <TimerPackage/>
+    <AliasPackage>
+        <AliasGroup isActive="yes" isFolder="yes">
+            <name>JP Engine</name>
+            <script></script>
+            <command></command>
+            <packageName></packageName>
+            <regex></regex>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Settings</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Show Settings</name>
+                    <script>JPSettingsDB:showData()</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp conf$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set Active Setting</name>
+                    <script>local setting = string.lower(matches[2])
+local toggle
+
+if matches[3] == &quot;on&quot; then toggle = &quot;yes&quot; else toggle = &quot;no&quot; end
+
+if setting == &quot;walk&quot; or setting == &quot;bash&quot; or setting == &quot;quest&quot; then
+	JPSettingsDB:set(&quot;active&quot;, setting, toggle)
+	echo(&quot;Setting &quot;..setting..&quot; set &quot;..matches[3]..&quot;.\n&quot;)
+elseif setting == &quot;all&quot; then
+	JPSettingsDB:set(&quot;active&quot;, &quot;bash&quot;, toggle)
+	JPSettingsDB:set(&quot;active&quot;, &quot;quest&quot;, toggle)
+	JPSettingsDB:set(&quot;active&quot;, &quot;walk&quot;, toggle)
+	echo(&quot;Setting &quot;..setting..&quot; set &quot;..matches[3]..&quot;.\n&quot;)
+else
+	echo(&quot;Cannot toggle &quot;..setting..&quot;.\n&quot;)
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp set (\w+) (on|off)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Walk Max_depth</name>
+                    <script>JPSettingsDB:set(&quot;walk&quot;,&quot;max_depth&quot;, matches[2])
+echo(&quot;Depth set to &quot;..matches[2]..&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp set walk max_depth (\d+)$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Walking</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Determine Path</name>
+                    <script>JP_determinePath()
+echo(&quot;Path determination complete.\n&quot;)
+raiseEvent(&quot;JP_onPrompt&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp determine path$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Take Step</name>
+                    <script>JP_take_step()</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jptstep$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Clear Path</name>
+                    <script>JPTables.walkList = JPList.new()
+echo(&quot;Path cleared.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp clear path$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Room Exclude/Include</name>
+                    <script>local area, toggle, room_num
+if matches[2] == &quot;area&quot; then 
+	area = getRoomArea(JPTables.movement.currentRoom) 
+else 
+	area = nil 
+end
+
+if matches[3] == &quot;no_walk&quot; then toggle = &quot;yes&quot; else toggle = &quot;no&quot; end
+
+room_num = tonumber(matches[4]) or JPTables.movement.currentRoom
+
+room_num = tostring(room_num)
+
+echo(&quot;Preparing to change room &quot;..room_num..&quot;\n&quot;)
+
+if area then
+	area = tostring(area)
+	if not JPAreaDB:exists(area) then
+		JPAreaDB:newArea(area)
+	end
+	local roomDB = JPAreaDB:get(area, &quot;rooms&quot;)
+	roomDB:set(room_num, &quot;no_walk&quot;, toggle)
+else
+	JPRoomDB:set(room_num, &quot;no_walk&quot;, toggle)
+end
+
+echo(&quot;No_walk set to &quot;..toggle..&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp(?: (area))? (no_walk|walk)(?: (\d+))?$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Players</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Show Player</name>
+                    <script>local ply = string.lower(matches[2])
+JPPlayerDB:showData(ply)
+
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp showp (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set Player Bash</name>
+                    <script>local ply = string.lower(matches[3])
+local toggle, thing
+if matches[4] == &quot;on&quot; then toggle = &quot;yes&quot; else toggle = &quot;no&quot; end
+if matches[2] == &quot;questp&quot; then thing = &quot;quest_with&quot; else thing = &quot;bash_with&quot; end
+
+
+JPPlayerDB:set(ply, thing, toggle)
+
+echo(thing..&quot; &quot;..ply..&quot; set to &quot;..toggle..&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp (questp|bashp) (\w+) (on|off)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set player password</name>
+                    <script>local ply = string.lower(matches[2])
+
+JPPlayerDB:set(ply, &quot;password&quot;, matches[3])
+
+echo(&quot;Password for &quot;..ply..&quot; set.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp password (\w+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Encrypted tell</name>
+                    <script>local ply = string.lower(matches[2])
+local key = JPPlayerDB:get(ply, &quot;password&quot;)
+
+if not key then echo(&quot;Password not set for &quot;..ply..&quot;\n&quot;);return end
+
+
+local enc_state = JPRC4_new(key)
+enc_state:generate(3072)
+local ciphertext = enc_state:cipher(matches[3])
+echo(&quot;hi\n&quot;)
+local cyphertext = JP_enc(ciphertext)
+
+cyphertext = &quot;@~!&quot;..cyphertext..&quot;!~@&quot;
+
+send(&quot;tell &quot;..ply..&quot; &quot;..cyphertext)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jpet (\w+) (.+)$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Bashing</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Show Area</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+
+area = tostring(area)
+
+if not JPAreaDB:exists(area) then echo(&quot;No data.\n&quot;);return end
+
+JPAreaDB:showData(area)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp showa$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Create Area</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+
+area = tostring(area)
+
+JPAreaDB:newArea(area)
+
+echo(&quot;OK&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp create area$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Bash Mob in Area</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+area = tostring(area)
+
+if not JPAreaDB:exists(area) then 
+	JPAreaDB:newArea(area)
+end
+
+local mob, mobDB, toggle
+mob = string.lower(matches[3])
+mobDB = JPAreaDB:get(area,&quot;mobs&quot;)
+if matches[2] == &quot;on&quot; then toggle = &quot;yes&quot; else toggle = &quot;no&quot; end
+mobDB:set(mob, &quot;bash_here&quot;, toggle)
+
+echo(&quot;Bashing mob &quot;..mob..&quot; set to &quot;..toggle..&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp bash(on|off) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set Area Setting</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+area = tostring(area)
+
+if not JPAreaDB:exists(area) then 
+	JPAreaDB:newArea(area)
+end
+
+local setting, value
+
+setting = &quot;s_&quot; .. string.lower(matches[2])
+value = string.lower(matches[3])
+
+JPAreaDB:set(area,setting,value)
+
+echo(&quot;Area &quot;..area..&quot; setting &quot;..setting..&quot; set to &quot;..value..&quot;.\n&quot;)
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp seta (\w+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Bash settings</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+area = tostring(area)
+
+if not JPAreaDB:exists(area) then 
+	JPAreaDB:newArea(area)
+end
+
+local mob, mobDB, toggle
+mob = string.lower(matches[4])
+mobDB = JPAreaDB:get(area,&quot;mobs&quot;)
+if matches[3] == &quot;on&quot; then 
+	toggle = &quot;yes&quot; 
+elseif matches[3] == &quot;off&quot; then 
+	toggle = &quot;no&quot; 
+elseif matches[2] == &quot;priority&quot; then
+	toggle = matches[3]
+else
+	echo(&quot;Only priority may be set to a number.\n&quot;)
+	return
+end
+mobDB:set(mob, matches[2], toggle)
+
+echo(&quot;Mob &quot;..mob..&quot; &quot;..matches[2]..&quot; set to &quot;..toggle..&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp bash (priority|aggro|team) (on|off|\d+) (.+)$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Questing</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Add quest action</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+area = tostring(area)
+
+if not JPAreaDB:exists(area) then 
+	JPAreaDB:newArea(area)
+end
+
+local questDB = JPAreaDB:get(area,&quot;quests&quot;)
+
+local questacts = questDB:get(matches[2], &quot;quest_action&quot;)
+
+questacts = questacts or {}
+
+table.insert(questacts, matches[3])
+
+questDB:set(matches[2], &quot;quest_action&quot;, questacts)
+
+display(questacts)
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp questadd (\d+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Clear quest actions</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+area = tostring(area)
+
+if not JPAreaDB:exists(area) then 
+	JPAreaDB:newArea(area)
+end
+
+local questDB = JPAreaDB:get(area,&quot;quests&quot;)
+questDB:del(matches[2], &quot;quest_action&quot;)
+
+echo(&quot;Quest actions cleared\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp questdel (\d+)$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>General</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Load All DBs</name>
+                    <script>JPSettingsDB.data = {}
+JPPlayerDB.data = {}
+JPAreaDB.data = {}
+JPRoomDB.data = {}
+JPSettingsDB:load()
+JPPlayerDB:load()
+JPAreaDB:areaLoad() -- special
+JPRoomDB:load()
+echo(&quot;Done\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp load all$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Save all DBs</name>
+                    <script>JPSettingsDB:save()
+JPPlayerDB:save()
+JPAreaDB:save()
+JPRoomDB:save()</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp save all$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Send the area in a message</name>
+                    <script>local room, area
+room = JPTables.movement.currentRoom
+area = getRoomArea(room)
+
+if not area then echo(&quot;Invalid area.\n&quot;);return end
+
+area = tostring(area)
+
+if not JPAreaDB:exists(area) then echo(&quot;No data.\n&quot;);return end
+
+local s = JPAreaDB:serializeArea(area)
+
+s = JP_enc(s)
+
+send(&quot;msg &quot;..matches[2]..&quot; ***%#&quot;..s..&quot;#%***&quot;)
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp msg area (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Load Area Data from Message</name>
+                    <script>if JPTables.messages.pickled == nil then echo(&quot;No message data found.\n&quot;);return end
+
+if matches[2] ~= &quot; confirm&quot; then
+	
+	JPAreaDB:unserializeData(JPTables.messages.pickled)
+	echo(&quot;Use JP LOAD MSG CONFIRM to finalize&quot;)
+else
+
+	if JPTables.messages.data == nil then
+		JPAreaDB:unserializeData(JPTables.messages.pickled)
+	end
+	if not JPAreaDB:loadArea() then
+		echo(&quot;Error while loading data.\n&quot;)
+	else
+		JPTables.messages = {}
+		echo(&quot;Area data loaded.\n&quot;)
+	end
+end
+
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp load msg( confirm)?$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Reset all databases</name>
+                    <script>JPSettingsDB = JPDB:new({name = &quot;settings.jpdb&quot;})
+JPPlayerDB = JPDB:new({name = &quot;player.jpdb&quot;})
+JPAreaDB = JPDB:new({name = &quot;area.jpdb&quot;})
+JPRoomDB = JPDB:new({name = &quot;room.jpdb&quot;})</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp nuke it all$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Talking</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Test Encryption</name>
+                    <script>local enc_state = JPRC4_new &quot;My Encryption Key&quot;
+enc_state:generate(3072)
+local ciphertext = enc_state:cipher(matches[2])
+
+display(JP_enc(ciphertext))
+local bencct = JP_enc(ciphertext)
+local bdecct = JP_dec(bencct)
+--
+local dec_state = JPRC4_new &quot;My Encryption Key&quot;
+dec_state:generate(3072)
+local plaintext = dec_state:cipher(bdecct)
+
+display(plaintext)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp test enc (.+)$</regex>
+                </Alias>
+            </AliasGroup>
+        </AliasGroup>
+    </AliasPackage>
+    <ActionPackage/>
+    <ScriptPackage>
+        <ScriptGroup isActive="yes" isFolder="yes">
+            <name>JP Engine</name>
+            <packageName></packageName>
+            <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+            <eventHandlerList/>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>events</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
+                <Script isActive="yes" isFolder="no">
+                    <name>replicas</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+function JP_item_list()
+	local items = gmcp.Char.Items.List.items
+	if gmcp.Char.Items.List.location == &quot;room&quot; then
+		JPTables.inRoom.Replicas = nil
+		JPTables.inRoom.Replicas = {}
+		local item
+		for item = 1, #items do
+			JPTables.inRoom.Replicas[items[item].id] = items[item]
+		end		
+	end
+end
+
+function JP_add_item()
+	if gmcp.Char.Items.Add.location == &quot;room&quot; then
+		JPTables.inRoom.Replicas[gmcp.Char.Items.Add.item.id] = gmcp.Char.Items.Add.item	
+	end
+end
+
+function JP_remove_item()
+	if gmcp.Char.Items.Remove.location == &quot;room&quot; then
+		JPTables.inRoom.Replicas[gmcp.Char.Items.Remove.item.id] = nil
+	end
+end
+
+registerAnonymousEventHandler(&quot;gmcp.Char.Items.List&quot;, &quot;JP_item_list&quot;)
+registerAnonymousEventHandler(&quot;gmcp.Char.Items.Add&quot;, &quot;JP_add_item&quot;)
+registerAnonymousEventHandler(&quot;gmcp.Char.Items.Remove&quot;, &quot;JP_remove_item&quot;)</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>players</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+function JP_player_list()
+	local players = gmcp.Room.Players
+	JPTables.inRoom.Players = nil
+	JPTables.inRoom.Players = {}
+	local ply
+	for ply = 1, #players do
+		JPTables.inRoom.Players[players[ply].name] = players[ply]	
+	end
+	raiseEvent(&quot;JP_playersUpdate&quot;)
+end
+
+function JP_add_player()
+	JPTables.inRoom.Players[gmcp.Room.AddPlayer.name] = gmcp.Room.AddPlayer
+	raiseEvent(&quot;JP_playersUpdate&quot;)
+end
+
+function JP_remove_player()
+	JPTables.inRoom.Players[gmcp.Room.RemovePlayer] = nil
+	raiseEvent(&quot;JP_playersUpdate&quot;)
+end
+
+registerAnonymousEventHandler(&quot;gmcp.Room.Players&quot;, &quot;JP_player_list&quot;)
+registerAnonymousEventHandler(&quot;gmcp.Room.RemovePlayer&quot;, &quot;JP_add_player&quot;)
+registerAnonymousEventHandler(&quot;gmcp.Room.AddPlayer&quot;, &quot;JP_remove_player&quot;)</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>vitals</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+function JP_vitals_update()
+-- hp=8030|maxhp=8030|mp=3734|maxmp=3740|nl=66|bal=1|eq=1|essence=10000|
+-- deaf=1|blind=1|string=H:8030/8030 M:3734/3740 NL:66/100 |
+-- salve=0|herb=0|pipe=0|bleed=17|health=0|purge=0|focus=0|prone=1|
+-- toadstool=0|stunned=1
+
+	JPTables.Vitals = gmcp.Char.Vitals
+
+end
+
+registerAnonymousEventHandler(&quot;gmcp.Char.Vitals&quot;, &quot;JP_vitals_update&quot;)</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>prompt</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+function JP_onPrompt()
+	local eqbal, prone, stun
+
+	if JPTables.Vitals.bal == &quot;1&quot; and JPTables.Vitals.eq == &quot;1&quot; then eqbal = true else eqbal = false end
+	if JPTables.Vitals.prone == &quot;1&quot; then prone = true else prone = false end
+	if JPTables.Vitals.stunned == &quot;1&quot; then stun = true else stun = false end
+
+	-- Initial Check for eq, bal, no prone or stun
+	if not eqbal or prone or stun then return end
+
+	-- Count Players
+	local ply, data, count
+
+	count = {
+		bash = 0,
+		quest = 0,
+		total = 0
+	}
+	--get the number of players in the room
+	for ply, data in pairs(JPTables.inRoom.Players) do
+		ply = string.lower(ply)
+		if JPPlayerDB:get(ply,&quot;bash_with&quot;) ~= &quot;yes&quot; then
+			count.bash = count.bash + 1
+		end
+		if JPPlayerDB:get(ply, &quot;quest_with&quot;) ~= &quot;yes&quot; then
+			count.quest = count.quest + 1
+		end
+		count.total = count.total + 1
+	end
+
+	-- Queued Actions
+	if JPList.isempty(JP_eqbalqueue) == false then
+		expandAlias(JPList.popright(JP_eqbalqueue))
+		return
+	end
+
+	-- Bashing Actions
+	if JPSettingsDB:get(&quot;active&quot;, &quot;bash&quot;) == &quot;yes&quot; and count.bash == 0 then
+		if JP_bash_now() then return end
+	end
+
+	-- Questing Actions
+	if JPSettingsDB:get(&quot;active&quot;, &quot;quest&quot;) == &quot;yes&quot; and count.quest == 0 then
+		if JP_quest_now() then
+			raiseEvent(&quot;JP_onPrompt&quot;)
+			return
+		end
+	end
+
+	-- Items from anywhere
+
+	-- Wait to heal
+	local hp, hpmax = tonumber(JPTables.Vitals.hp), tonumber(JPTables.Vitals.maxhp)
+
+	if 100 * hp / hpmax &lt; 90 and 
+		(not JPTables.movement.walkDelay or JPTables.movement.walkDelay == &quot;no&quot;) then
+	
+		JPTables.movement.walkDelay=&quot;yes&quot;
+		tempTimer(.5, [[JPTables.movement.walkDelay=&quot;no&quot;;raiseEvent(&quot;JP_onPrompt&quot;)]])
+		return
+	end
+
+	-- Walking Actions
+	if JPSettingsDB:get(&quot;active&quot;, &quot;walk&quot;) == &quot;yes&quot; and 
+		(not JPTables.movement.walkDelay or JPTables.movement.walkDelay == &quot;no&quot;) and
+		JPList.isempty(JPTables.walkList) == false then
+
+		JP_take_step()
+		JPTables.movement.walkDelay=&quot;yes&quot;
+		tempTimer(.2, [[JPTables.movement.walkDelay=&quot;no&quot;;raiseEvent(&quot;JP_onPrompt&quot;)]])
+
+	end
+end
+
+registerAnonymousEventHandler(&quot;JP_onPrompt&quot;, &quot;JP_onPrompt&quot;)
+</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>room</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+function JP_new_room()
+	JPTables.movement.currentRoom = gmcp.Room.Info.num
+	if not JPTables.movement.oldRoom or JPTables.movement.oldRoom ~= JPTables.movement.currentRoom then
+		--mobDB.setSetting(&quot;room_done&quot;, &quot;no&quot;)
+		JPSettingsDB:set(&quot;quest&quot;,&quot;room_done&quot;, &quot;no&quot;)
+		JPTables.movement.oldRoom = JPTables.movement.currentRoom
+		JPTables.movement.room_changing = false
+	end
+end
+
+registerAnonymousEventHandler(&quot;gmcp.Room.Info&quot;, &quot;JP_new_room&quot;)</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Load/Exit</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+function JP_onLoad()
+	JPSettingsDB:load()
+	JPPlayerDB:load()
+	JPAreaDB:areaLoad() -- special
+	JPRoomDB:load()
+end
+
+function JP_onExit()
+	JPSettingsDB:save()
+	JPPlayerDB:save()
+	JPAreaDB:save()
+	JPRoomDB:save()
+end
+
+registerAnonymousEventHandler(&quot;sysLoadEvent&quot;, &quot;JP_onLoad&quot;)
+registerAnonymousEventHandler(&quot;sysExitEvent&quot;, &quot;JP_onExit&quot;)</script>
+                    <eventHandlerList/>
+                </Script>
+            </ScriptGroup>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>walking</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
+                <Script isActive="yes" isFolder="no">
+                    <name>Area wander</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+function JP_determinePath()
+	local room = gmcp.Room.Info.num
+	local area = getRoomArea(room)
+	local roomlist, endresult = getAreaRooms(area), {}
+	local max_depth = JPSettingsDB:get(&quot;walk&quot;, &quot;max_depth&quot;) or 100
+	local roomDB = JPAreaDB:get(tostring(area), &quot;rooms&quot;)
+ 
+	-- obtain a room list with visit marked false
+   	for _, id in ipairs(roomlist) do
+		endresult[id] = false
+		local env = getRoomEnv(id)
+
+		--Explicit global settings take priority over area settings
+
+		-- exclude certain rooms (global settings)
+		if JPRoomDB:get(tostring(id),&quot;no_walk&quot;) == &quot;yes&quot; then
+		--if id == 14419 or id == 11144 or id == 9369 then -- chur and sand in booming dunes
+			endresult[id] = true
+		elseif JPRoomDB:get(tostring(id), &quot;no_walk&quot;) == nil and
+			roomDB and roomDB:get(tostring(id), &quot;no_walk&quot;) == &quot;yes&quot; then
+			endresult[id] = true
+		end
+	end
+	--set current room = visited
+	endresult[room] = true
+
+	JPTables.walkList = JPList.new()
+
+	JP_addToPath(endresult,room,JPTables.walkList,0,max_depth)
+
+	JPTables.movement.going_to_room = room
+end
+
+function JP_addToPath(rooms,room,path,depth,max_depth)
+	local exits = getRoomExits(room)
+	
+	for k,v in pairs(exits) do
+		if rooms[v] == false then
+			JPList.pushright(path, v)
+			rooms[v] = true
+			--List.pushright(back, oppositeDirection(k))
+			--add recursion
+			if depth &lt;= max_depth then
+				JP_addToPath(rooms,v,path,depth+1,max_depth)
+			end
+			JPList.pushright(path, room)
+		end
+	end
+end
+
+function JP_take_step()
+	JPTables.movement.tstepLoop = JPTables.movement.tstepLoop or 0
+	--if not room_changing then
+	--echo(&quot;Going to: &quot;..going_to_room..&quot; Current: &quot;..currentRoom..&quot;.\n&quot;)
+	if JPTables.movement.going_to_room == JPTables.movement.currentRoom then
+		if List.isempty(JPTables.walkList) == false then
+			local step = List.popleft(JPTables.walkList)
+			--send(step.dir)
+			mmp.gotoRoom(tonumber(step),nil)
+			JPTables.movement.room_changing = true
+			JPTables.movement.going_to_room = tonumber(step)
+			JPTables.movement.tstepLoop = 0
+		else
+			echo(&quot;List empty\n&quot;)
+		end
+	else
+		--echo(&quot;Haven't changed rooms yet!\n&quot;)
+		JPTables.movement.tstepLoop = JPTables.movement.tstepLoop + 1
+
+		if JPTables.movement.tstepLoop &gt; 15 then
+			mmp.gotoRoom(JPTables.movement.going_to_room,nil)
+			JPTables.movement.tstepLoop = 0
+		end
+	end
+end
+</script>
+                    <eventHandlerList/>
+                </Script>
+            </ScriptGroup>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>bashing</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
+                <Script isActive="yes" isFolder="no">
+                    <name>Bashing Script</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+function JP_bash_now()
+
+	local number, data, bash, room, area, mobDB
+	room = JPTables.movement.currentRoom
+	area = getRoomArea(room)
+
+	if not area then return false end
+	area = tostring(area)
+
+	if not JPAreaDB:exists(area) then return false end
+
+	mobDB = JPAreaDB:get(area, &quot;mobs&quot;)
+
+
+	bash = {}
+	for number, data in pairs(JPTables.inRoom.Replicas) do
+		if data.attrib == &quot;m&quot; then
+			local name = string.lower(data.name)
+			if mobDB:get(name, &quot;bash_here&quot;) == &quot;yes&quot; then
+				table.insert(bash, {name = name,number=number})
+			end
+		end
+	end
+
+	if #bash &gt; 0 then
+		local b
+		local pbash = {}
+		local num_aggro = 0
+		local num_team = 0
+		local num_total = 0
+
+		for b = 1, #bash do
+			local priority = mobDB:get(bash[b].name, &quot;priority&quot;)
+			if priority == nil then 
+				priority = 0			
+			else 
+				priority = tonumber(priority) 
+			end
+			local aggro = mobDB:get(bash[b].name, &quot;aggro&quot;)
+			if aggro == nil or aggro == &quot;no&quot; then aggro = 0 else aggro = 100 end
+			priority = priority + aggro
+			num_aggro = num_aggro + aggro / 100
+			local team = mobDB:get(bash[b].name, &quot;team&quot;)
+			if team == nil or team == &quot;no&quot; then team = 0 else team = 50 end
+			priority = priority + team
+			num_team = num_team + team / 50
+			pbash[bash[b].number] = priority
+			num_total = num_total + 1
+		end
+	
+		local key, value
+		b = nil
+		for key, value in pairs(pbash) do
+			if b == nil then
+				b = key
+			else
+				if value &gt; pbash[b] then
+					b = key
+				end
+			end
+		end	
+
+
+		local maxBash = JPAreaDB:get(area, &quot;s_bmax&quot;)
+		local bashCommand = JPSettingsDB:get(&quot;bash&quot;, &quot;command&quot;)
+
+		if not bashCommand then bashCommand = &quot;attack&quot; end
+
+		if not maxBash or tonumber(maxBash) &gt;= (num_total) then		
+			send(bashCommand..&quot; &quot;..b)
+			return true
+		else
+			echo(&quot;Too many mobs!\n&quot;)
+			echo(&quot;Max: &quot;..maxBash..&quot; you have &quot;..(num_total)..&quot;\n&quot;)
+		end
+	end	
+	return false
+end</script>
+                    <eventHandlerList/>
+                </Script>
+            </ScriptGroup>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>questing</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
+                <Script isActive="yes" isFolder="no">
+                    <name>Questing Script</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+function JP_quest_now()
+	--search through the items
+	local room, area, quest
+	room = JPTables.movement.currentRoom
+	area = getRoomArea(room)
+
+	if not area then return false end
+	area = tostring(area)
+
+	if not JPAreaDB:exists(area) then return false end
+
+	questDB = JPAreaDB:get(area, &quot;quests&quot;)
+
+	quest = false 
+
+
+
+	local number, data
+	local alreadyDone = JPSettingsDB:get(&quot;quest&quot;,&quot;room_done&quot;)
+	if not alreadyDone or alreadyDone ~= &quot;yes&quot; then
+		for number, data in pairs(JPTables.inRoom.Replicas) do
+			local acts = questDB:get(number, &quot;quest_action&quot;) or {}
+			local act
+			for act = 1, #acts do
+				List.pushleft(JP_eqbalqueue, acts[act])
+				cecho(&quot;&lt;green:black&gt;Queued &quot;..acts[act]..&quot;&lt;reset&gt;\n&quot;)
+				--expandAlias(acts[act])
+				quest = true
+			end
+		end
+		JPSettingsDB:set(&quot;quest&quot;, &quot;room_done&quot;, &quot;yes&quot;)		
+	end
+	return quest
+end</script>
+                    <eventHandlerList/>
+                </Script>
+            </ScriptGroup>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>data</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
+                <Script isActive="yes" isFolder="no">
+                    <name>Database Object</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+JPDB = {}
+
+function JPDB:new(o)
+	o = o or {}
+	o.data = o.data or {}
+	o.name = o.name or &quot;default&quot;
+	setmetatable(o,self)
+	self.__index = self
+	return o
+end
+
+function JPDB:save()
+	table.save(getMudletHomeDir()..&quot;/&quot;..self.name, self)
+end
+
+function JPDB:load()
+	table.load(getMudletHomeDir()..&quot;/&quot;..self.name, self)
+end
+
+function JPDB:add(name)
+	name = string.lower(name)
+	self.data[name] = self.data[name] or {}
+end
+
+function JPDB:exists(name)
+	name = string.lower(name)
+	if self.data[name] ~= nil then return true end
+	return false
+end
+
+function JPDB:set(name, stat, value)
+	name = string.lower(name)
+	self:add(name)
+	self.data[name][stat] = value
+end
+
+function JPDB:get(name, stat)
+	name = string.lower(name)
+	if self:exists(name) then 
+		if stat then
+			return self.data[name][stat]
+		else
+			return self.data[name]
+		end
+	end
+	return nil
+end
+
+function JPDB:del(name,stat)
+	name = string.lower(name)
+	if self:exists(name) then
+		if stat then
+			self.data[name][stat] = nil
+		else
+			self.data[name] = nil
+		end
+	end
+end
+
+function JPDB:show()
+	display(self)
+end
+
+function JPDB:showData(name)
+	if not name then
+		display(self.data)
+	else
+		name = string.lower(name)
+		display(self.data[name])
+	end
+end
+</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Table Data</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+JPTables = JPTables or {}
+JPTables.inRoom = JPTables.inRoom or {}
+JPTables.inRoom.Players = JPTables.inRoom.Players or {}
+JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
+JPTables.walkList = JPTables.walkList or {}
+JPTables.movement = JPTables.movement or {}
+JPTables.messages = JPTables.messages or {}
+</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Queues</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+JPList = {}
+function JPList.new()
+  return {first = 0, last = -1}
+end
+function JPList.pushleft (list, value)
+  local first = list.first - 1
+  list.first = first
+  list[first] = value
+end
+
+function JPList.pushright (list, value)
+  local last = list.last + 1
+  list.last = last
+  list[last] = value
+end
+
+function JPList.popleft (list)
+  local first = list.first
+  if first &gt; list.last then error(&quot;list is empty&quot;) end
+  local value = list[first]
+  list[first] = nil        -- to allow garbage collection
+  list.first = first + 1
+  return value
+end
+
+function JPList.popright (list)
+  local last = list.last
+  if list.first &gt; last then error(&quot;list is empty&quot;) end
+  local value = list[last]
+  list[last] = nil         -- to allow garbage collection
+  list.last = last - 1
+  return value
+end
+
+function JPList.isempty (list)
+	local first = list.first
+	return first &gt; list.last
+end
+
+JP_eqbalqueue = JP_eqbalqueue or JPList.new()</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Settings Database</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+JPSettingsDB = JPSettingsDB or JPDB:new({name = &quot;settings.jpdb&quot;})
+
+
+</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Player Database</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+JPPlayerDB = JPPlayerDB or JPDB:new({name = &quot;player.jpdb&quot;})</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Areas Database</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+JPAreaDB = JPAreaDB or JPDB:new({name = &quot;area.jpdb&quot;})
+
+function JPAreaDB:newArea(num)
+	self:del(num)
+	self:set(num, &quot;mobs&quot;,  JPDB:new({name=tostring(num)..&quot;mobs&quot;}))
+	self:set(num, &quot;quests&quot;,  JPDB:new({name=tostring(num)..&quot;quests&quot;}))
+	self:set(num, &quot;rooms&quot;,  JPDB:new({name=tostring(num)..&quot;rooms&quot;}))
+end
+
+function JPAreaDB:areaLoad()
+	echo(&quot;JPAreaLoad\n&quot;)
+	self:load()
+	display(JPAreaDB)
+	self:refreshData()
+end
+
+function JPAreaDB:refreshData()
+	echo(&quot;RefreshData&quot;)
+	for k, v in pairs(self.data) do
+		self:set(k, &quot;mobs&quot;, JPDB:new(v.mobs))
+		self:set(k, &quot;quests&quot;, JPDB:new(v.quests))
+		self:set(k, &quot;rooms&quot;, JPDB:new(v.rooms))
+	end
+end
+	
+function JPAreaDB:serializeArea(num)
+	local area = self:get(num)
+	--display(area)
+
+	local s_area = {}
+	s_area[num] = area
+
+	table.save(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;, s_area)
+
+	local file = io.open(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;)
+	local s = file:read(&quot;*all&quot;)
+	file:close()
+	os.remove(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;)
+	
+	--display(s)
+	return s
+end
+
+function JPAreaDB:unserializeAndLoadArea(data)
+	local area = {}
+	local file = assert(io.open(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;, &quot;w&quot;))
+	file:write(data)
+	file:close()
+
+	table.load(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;, area)
+	os.remove(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;)
+
+	display(area)
+
+	local k, v
+
+	for k, v in pairs(area) do
+		self.data[k] = v
+	end
+	self:refreshData()
+
+end
+
+function JPAreaDB:unserializeData(data)
+	local area = {}
+	local file = assert(io.open(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;, &quot;w&quot;))
+	file:write(data)
+	file:close()
+
+	table.load(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;, area)
+	os.remove(getMudletHomeDir()..&quot;/tempFile.jpdb&quot;)
+
+	display(area)
+	JPTables.messages.data = area
+
+	local k, v
+	for k, v in pairs(area) do
+		echo(&quot;Found data for area &quot;..k..&quot;.\n&quot;)
+	end
+end
+
+function JPAreaDB:loadArea()
+	local k, v
+	local areas = JPTables.messages.data
+
+	if not areas then return false end
+
+	for k, v in pairs(areas) do
+		self.data[k] = v
+	end
+	self:refreshData()
+	return true
+end</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Room Database</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+JPRoomDB = JPRoomDB or JPDB:new({name = &quot;room.jpdb&quot;})</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Base64</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+-- Lua 5.1+ base64 v3.0 (c) 2009 by Alex Kloss &lt;alexthkloss@web.de&gt;
+-- licensed under the terms of the LGPL2
+
+-- character table string
+local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+-- encoding
+function JP_enc(data)
+    return ((data:gsub('.', function(x) 
+        local r,b='',x:byte()
+        for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)&gt;0 and '1' or '0') end
+        return r;
+    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+        if (#x &lt; 6) then return '' end
+        local c=0
+        for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
+        return b:sub(c+1,c+1)
+    end)..({ '', '==', '=' })[#data%3+1])
+end
+
+-- decoding
+function JP_dec(data)
+    data = string.gsub(data, '[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if (x == '=') then return '' end
+        local r,f='',(b:find(x)-1)
+        for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)&gt;0 and '1' or '0') end
+        return r;
+    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
+        if (#x ~= 8) then return '' end
+        local c=0
+        for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
+        return string.char(c)
+    end))
+end</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>ARC Four</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+-- ARCFOUR implementation in pure Lua
+-- Copyright 2008 Rob Kendrick &lt;rjek@rjek.com&gt;
+-- Distributed under the MIT licence
+
+-- To create a new context;
+-- 	rc4_context = arcfour.new(optional_key_string)
+--
+-- To schedule a key
+-- 	rc4_context:schedule(key_string)
+--
+-- To generate a string of bytes of &quot;random&quot; data from the generator
+--	bytes = rc4_context:generate(number_of_bytes)
+--
+-- To encrypt/decrypt a string
+--	ciphertext = rc4_context:cipher(plaintext)
+--
+-- Example usage;
+--	enc_state = arcfour.new &quot;My Encryption Key&quot;
+--	enc_state:generate(3072)
+--	ciphertext = enc_state:cipher &quot;Hello, world!&quot;
+--
+--	dec_state = arcfour.new &quot;My Encryption Key&quot;
+--	dec_state:generate(3072)
+--	plaintext = dec_state:cipher(ciphertext)
+--
+-- Best practise says to discard the first 3072 bytes from the generated
+-- stream to avoid leaking information about the key.  Additionally, if using
+-- a nonce, you should hash your key and nonce together, rather than
+-- concatenating them.
+
+--module(..., package.seeall)
+
+-- Given a binary boolean function b(x,y) defined by a table
+-- of four bits { b(0,0), b(0,1), b(1,0), b(1,1) },
+-- return a 2D lookup table f[][] where f[x][y] is b() applied
+-- bitwise to the lower eight bits of x and y.
+local function make_byte_table(bits)
+	local f = { }
+	for i = 0, 255 do
+		f[i] = { }
+	end
+	
+	f[0][0] = bits[1] * 255
+
+	local m = 1
+	
+	for k = 0, 7 do
+		for i = 0, m - 1 do
+			for j = 0, m - 1 do
+				local fij = f[i][j] - bits[1] * m
+				f[i  ][j+m] = fij + bits[2] * m
+				f[i+m][j  ] = fij + bits[3] * m
+				f[i+m][j+m] = fij + bits[4] * m
+			end
+		end
+		m = m * 2
+	end
+	
+	return f
+end
+
+local byte_xor = make_byte_table { 0, 1, 1, 0 }
+
+local function generate(self, count)
+	local S, i, j = self.S, self.i, self.j
+	local o = { }
+	local char = string.char
+	
+	for z = 1, count do
+		i = (i + 1) % 256
+		j = (j + S[i]) % 256
+		S[i], S[j] = S[j], S[i]
+		o[z] = char(S[(S[i] + S[j]) % 256])
+	end
+	
+	self.i, self.j = i, j
+	return table.concat(o)
+end
+
+local function cipher(self, plaintext)
+	local pad = generate(self, #plaintext)
+	local r = { }
+	local byte = string.byte
+	local char = string.char
+	
+	for i = 1, #plaintext do
+		r[i] = char(byte_xor[byte(plaintext, i)][byte(pad, i)])
+	end
+	
+	return table.concat(r)
+end
+
+local function schedule(self, key)
+	local S = self.S
+	local j, kz = 0, #key
+	local byte = string.byte
+	
+	for i = 0, 255 do
+		j = (j + S[i] + byte(key, (i % kz) + 1)) % 256;
+		S[i], S[j] = S[j], S[i]
+	end
+end
+
+function JPRC4_new(key)
+	local S = { }
+	local r = {
+		S = S, i = 0, j = 0,
+		generate = generate,
+		cipher = cipher,
+		schedule = schedule	
+	}
+	
+	for i = 0, 255 do
+		S[i] = i
+	end
+	
+	if key then
+		r:schedule(key)
+	end
+	
+	return r	
+end
+
+</script>
+                    <eventHandlerList/>
+                </Script>
+            </ScriptGroup>
+        </ScriptGroup>
+    </ScriptPackage>
+    <KeyPackage/>
+</MudletPackage>
