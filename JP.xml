@@ -734,7 +734,7 @@ end
                 <Alias isActive="yes" isFolder="no">
                     <name>Load Area Data from Message</name>
                     <script>local i
-
+if not JPTables.msg.size then jpf.echo(&quot;No download pending.\n&quot;);return end
 for i = 1, JPTables.msg.size do
 	if JPTables.msg.done[i] ~= true then
 		jpf.echo(&quot;Download not complete, missing at least piece &quot;..i..&quot;!\n&quot;)
@@ -762,6 +762,10 @@ else
 		echo(&quot;Error while loading data.\n&quot;)
 	else
 		JPTables.messages = {}
+		JPTables.msg.data = {}
+		JPTables.msg.seed = nil
+		JPTables.msg.done = {}
+		JPTables.msg.size = nil
 		echo(&quot;Area data loaded.\n&quot;)
 	end
 end
