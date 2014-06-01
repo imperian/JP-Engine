@@ -722,7 +722,7 @@ local rnd = math.random(999999999)
 
 j = j - 1
 for i = 1, j do
-	tempTimer(i,[[send(&quot;msg ]]..matches[2]..&quot; &quot;..string.format(&quot;!*%0.4i*%0.4i*%0.9i$%s$***!&quot;,i,j,rnd,k[i])..[[&quot;)]])
+	tempTimer((i-1)*6+1,[[send(&quot;msg ]]..matches[2]..&quot; &quot;..string.format(&quot;!*%0.4i*%0.4i*%0.9i$%s$***!&quot;,i,j,rnd,k[i])..[[&quot;)]])
 end
 
 --send(&quot;msg &quot;..matches[2]..&quot; ***%#&quot;..s..&quot;#%***&quot;)
