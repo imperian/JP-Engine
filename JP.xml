@@ -83,7 +83,7 @@
                     <colorTriggerBgColor>#000000</colorTriggerBgColor>
                     <regexCodeList/>
                     <regexCodePropertyList/>
-                    <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
                         <name>Base64 Msg Begin</name>
                         <script>echo(&quot;\nFirst line match.\n&quot;)
 --echo(&quot;Matched: &quot;..matches[2]..&quot;\n&quot;)
@@ -107,6 +107,61 @@ echo(&quot;Received data message. Use JP LOAD MSG to replace your current area d
                         <colorTriggerBgColor>#000000</colorTriggerBgColor>
                         <regexCodeList>
                             <string>^&quot;\*\*\*%#([a-zA-Z0-9/+=]+)#%\*\*\*.&quot;$</string>
+                        </regexCodeList>
+                        <regexCodePropertyList>
+                            <integer>1</integer>
+                        </regexCodePropertyList>
+                    </Trigger>
+                    <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                        <name>Multipart Msgs</name>
+                        <script>local min, max = tonumber(matches[2]), tonumber(matches[3])
+local rnd = tonumber(matches[4])
+
+jpf.echo(&quot;\nPart &quot;..min..&quot; of &quot;..max..&quot; in seed &quot;..rnd..&quot;.\n&quot;)
+
+if JPTables.msg.seed ~= rnd then
+	jpf.echo(&quot;Starting to assemble new area.\n&quot;)
+	JPTables.msg.data = {}
+	JPTables.msg.seed = rnd
+	JPTables.msg.done = {}
+	JPTables.msg.size = max
+end
+
+if JPTables.msg.done[min] == true then
+	jpf.echo(&quot;Reprocessing chunk &quot;..min..&quot;\n&quot;)
+else
+	jpf.echo(&quot;Processing new chunk &quot;..min..&quot;\n&quot;)
+	JPTables.msg.done[min] = true
+end
+JPTables.msg.data[min] = matches[5]
+
+local i, j
+
+jpf.echo(&quot;Checking what chunks are still missing...&quot;)
+j = 0
+for i = 1, max do
+	if not JPTables.msg.done[i] then
+		if j == 0 then echo(&quot;\nMissing: &quot;) end
+		jpf.echo(tostring(i)..&quot;...&quot;)
+		j = j + 1
+	end
+end
+jpf.echo(&quot;done!\n&quot;)
+if j == 0 then
+	jpf.echo(&quot;No sections missing, do JP LOAD MSG to complete.\n&quot;)
+end</script>
+                        <triggerType>0</triggerType>
+                        <conditonLineDelta>0</conditonLineDelta>
+                        <mStayOpen>0</mStayOpen>
+                        <mCommand></mCommand>
+                        <packageName></packageName>
+                        <mFgColor>#ff0000</mFgColor>
+                        <mBgColor>#ffff00</mBgColor>
+                        <mSoundFile></mSoundFile>
+                        <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                        <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                        <regexCodeList>
+                            <string>^&quot;!\*(\d{4})\*(\d{4})\*(\d{9})\$([a-zA-Z0-9/=+]+)\$\*\*\*!&quot;$</string>
                         </regexCodeList>
                         <regexCodePropertyList>
                             <integer>1</integer>
@@ -246,6 +301,14 @@ echo(&quot;Depth set to &quot;..matches[2]..&quot;\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp set walk max_depth (\d+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set JP Color</name>
+                    <script>JPSettingsDB:set(&quot;colors&quot;, &quot;default&quot;, matches[2])
+jpf.echo(&quot;Color set to &quot;..matches[2]..&quot;!\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp set color (\w+)$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -642,7 +705,27 @@ local s = JPAreaDB:serializeArea(area)
 
 s = JP_enc(s)
 
-send(&quot;msg &quot;..matches[2]..&quot; ***%#&quot;..s..&quot;#%***&quot;)
+local length = s:len()
+local i, j, k
+j = 1
+k = {}
+for i = 1, length, 2000 do
+	echo(&quot;chunk &quot;..i..&quot;.\n&quot;)
+	k[j] = s:sub(i,i+1999)
+	j = j + 1
+end
+
+math.randomseed( os.time() )
+math.random(); math.random(); math.random()
+
+local rnd = math.random(999999999)
+
+j = j - 1
+for i = 1, j do
+	tempTimer(i,[[send(&quot;msg ]]..matches[2]..&quot; &quot;..string.format(&quot;!*%0.4i*%0.4i*%0.9i$%s$***!&quot;,i,j,rnd,k[i])..[[&quot;)]])
+end
+
+--send(&quot;msg &quot;..matches[2]..&quot; ***%#&quot;..s..&quot;#%***&quot;)
 </script>
                     <command></command>
                     <packageName></packageName>
@@ -650,17 +733,31 @@ send(&quot;msg &quot;..matches[2]..&quot; ***%#&quot;..s..&quot;#%***&quot;)
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Load Area Data from Message</name>
-                    <script>if JPTables.messages.pickled == nil then echo(&quot;No message data found.\n&quot;);return end
+                    <script>local i
+
+for i = 1, JPTables.msg.size do
+	if JPTables.msg.done[i] ~= true then
+		jpf.echo(&quot;Download not complete, missing at least piece &quot;..i..&quot;!\n&quot;)
+		return
+	end
+end
+
+local assemble
+
+if JPTables.messages.data == nil then
+	local s = &quot;&quot;
+	for i = 1, JPTables.msg.size do
+		s = s .. JPTables.msg.data[i]
+	end
+	JPTables.messages.pickled = JP_dec(s)
+
+	JPAreaDB:unserializeData(JPTables.messages.pickled)
+end
 
 if matches[2] ~= &quot; confirm&quot; then
-	
-	JPAreaDB:unserializeData(JPTables.messages.pickled)
-	echo(&quot;Use JP LOAD MSG CONFIRM to finalize&quot;)
+	jpf.echo(&quot;Use JP LOAD MSG CONFIRM to finalize&quot;)
 else
 
-	if JPTables.messages.data == nil then
-		JPAreaDB:unserializeData(JPTables.messages.pickled)
-	end
 	if not JPAreaDB:loadArea() then
 		echo(&quot;Error while loading data.\n&quot;)
 	else
@@ -677,10 +774,45 @@ end
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Test</name>
-                    <script></script>
+                    <script>longString = &quot;cmV0dXJuIHt7WyBbWzMyXV0gXSA9IHsyfSx9LAp7WyBbW3Jvb21zXV0gXSA9IHszfSxbIFtbcXVlc3RzXV0gXSA9IHs0fSxbIFtbbW9ic11dIF0gPSB7NX0sfSwKe1sgW1tuYW1lXV0gXSA9IFtbMzJyb29tc11dLFsgW1tkYXRhXV0gXSA9IHs2fSx9LAp7WyBbW25hbWVdXSBdID0gW1szMnF1ZXN0c11dLFsgW1tkYXRhXV0gXSA9IHs3fSx9LAp7WyBbW25hbWVdXSBdID0gW1szMm1vYnNdXSxbIFtbZGF0YV1dIF0gPSB7OH0sfSwKe30sCntbIFtbODI4MzFdXSBdID0gezl9LFsgW1sxOTY2NDFdXSBdID0gezEwfSxbIFtbMjAzMTQ1XV0gXSA9IHsxMX0sWyBbWzU4NDM3XV0gXSA9IHsxMn0sWyBbWzEwMDIwMV1dIF0gPSB7MTN9LFsgW1s5MzYxXV0gXSA9IHsxNH0sfSwKe1sgW1thIG1hbGZvcm1lZCBtaWxsaXBlZGVdXSBdID0gezE1fSxbIFtbYSBibGlnaHRlZCBnaWFudCB3ZXRhXV0gXSA9IHsxNn0sWyBbW3RoZSBnYXJnYW50dWFuIHdldGEgcXVlZW5dXSBdID0gezE3fSxbIFtbYW4gZW5vcm1vdXMgZWFydGh3b3JtXV0gXSA9IHsxOH0sWyBbW2EgbXV0YXRlZCBlYXJ3aWddXSBdID0gezE5fSx9LAp7WyBbW3F1ZXN0X2FjdGlvbl1dIF0gPSB7MjB9LH0sCntbIFtbcXVlc3RfYWN0aW9uXV0gXSA9IHsyMX0sfSwKe1sgW1txdWVzdF9hY3Rpb25dXSBdID0gezIyfSx9LAp7WyBbW3F1ZXN0X2FjdGlvbl1dIF0gPSB7MjN9LH0sCntbIFtbcXVlc3RfYWN0aW9uXV0gXSA9IHsyNH0sfSwKe1sgW1txdWVzdF9hY3Rpb25dXSBdID0gezI1fSx9LAp7WyBbW2Jhc2hfaGVyZV1dIF0gPSBbW3llc11dLH0sCntbIFtbYmFzaF9oZXJlXV0gXSA9IFtbeWVzXV0sWyBbW2FnZ3JvXV0gXSA9IFtbeWVzXV0sfSwKe1sgW1tiYXNoX2hlcmVdXSBdID0gW1t5ZXNdXSxbIFtbYWdncm9dXSBdID0gW1t5ZXNdXSx9LAp7WyBbW2Jhc2hfaGVyZV1dIF0gPSBbW3llc11dLFsgW1thZ2dyb11dIF0gPSBbW3llc11dLH0sCntbIFtbYmFzaF9oZXJlXV0gXSA9IFtbeWVzXV0sfSwKe1sxXSA9IFtbZ2V0IHNob2U4MjgzMV1dLH0sCntbMV0gPSBbW2dldCBib29rMTk2NjQxXV0sfSwKe1sxXSA9IFtbZ2V0IGJ1Y2tsZTIwMzE0NV1dLH0sCntbMV0gPSBbW2dlbmVyb3NpdHldXSxbMl0gPSBbWy8vaWYganBmLml0ZW1Jbkludig4MjgzMSkgdGhlbiBqcGYucXVldWUoImdpdmUgODI4MzEgdG8gc3R5bGl0ZSIpIGVuZF1dLFszXSA9IFtbLy9pZiBqcGYuaXRlbUluSW52KDkzNjEpIHRoZW4ganBmLnF1ZXVlKCJnaXZlIDkzNjEgdG8gc3R5bGl0ZSIpIGVuZF1dLFs0XSA9IFtbLy9pZiBqcGYuaXRlbUluSW52KDIwMzE0NSkgdGhlbiBqcGYucXVldWUoImdpdmUgMjAzMTQ1IHRvIHN0eWxpdGUiKSBlbmRdXSxbNV0gPSBbWy8vaWYganBmLml0ZW1JbkludigxOTY2NDEpIHRoZW4ganBmLnF1ZXVlKCJnaXZlIDE5NjY0MSB0byBzdHlsaXRlIikgZW5kXV0sWzZdID0gW1twdXQgZ29sZCBpbiBwYWNrXV0sWzddID0gW1tzZWxmaXNobmVzc11dLH0sCntbMV0gPSBbW2dlbmVyb3NpdHldXSxbMl0gPSBbW2dpdmUgNTAgYnVnIHRvIGFuZHZlcmp&quot;
+
+echo(&quot;Long string length: &quot;..longString:len()..&quot;\n&quot;)
+
+local length = longString:len()
+local i, j, k
+j = 1
+k = {}
+for i = 1, length, 200 do
+
+	echo(&quot;chunk &quot;..i..&quot;.\n&quot;)
+	--echo(longString:sub(i,i+999)..&quot;\n&quot;)
+	k[j] = longString:sub(i,i+199)
+
+	j = j + 1
+
+end
+
+j = j - 1
+
+display(k)
+
+for i = 1, j do
+	echo(string.format(&quot;!*%0.4i*%0.4i*$%s$***!&quot;,i,j,k[i]))
+end</script>
                     <command></command>
                     <packageName></packageName>
-                    <regex></regex>
+                    <regex>^jp test$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Clear Assembled Chunks</name>
+                    <script>JPTables.msg.data = {}
+JPTables.msg.seed = nil
+JPTables.msg.done = {}
+JPTables.msg.size = nil
+jpf.echo(&quot;Cleared.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp clear chunks$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -1452,6 +1584,9 @@ JPTables.inInv = JPTables.inInv or {}
 JPTables.walkList = JPTables.walkList or {}
 JPTables.movement = JPTables.movement or {}
 JPTables.messages = JPTables.messages or {}
+JPTables.msg = JPTables.msg or {}
+JPTables.msg.data = JPTables.msg.data or {}
+JPTables.msg.done = JPTables.msg.done or {}
 </script>
                     <eventHandlerList/>
                 </Script>
@@ -1879,6 +2014,16 @@ end
 function jpf.queue(thing)
 	List.pushleft(JP_eqbalqueue, thing)
 	cecho(&quot;&lt;green:black&gt;Queued &quot;..thing..&quot;&lt;reset&gt;\n&quot;)
+end
+
+function jpf.echo(msg)
+	local color = JPSettingsDB:get(&quot;colors&quot;, &quot;default&quot;)
+
+	if not color then
+		echo(msg)
+	else
+		cecho(&quot;&lt;&quot;..color..&quot;&gt;&quot;..msg..&quot;&lt;reset&gt;&quot;)
+	end
 end</script>
                     <eventHandlerList/>
                 </Script>
