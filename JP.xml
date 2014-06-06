@@ -584,8 +584,10 @@ elseif matches[3] == &quot;off&quot; then
 	toggle = &quot;no&quot; 
 elseif matches[2] == &quot;priority&quot; then
 	toggle = matches[3]
+elseif matches[2] == &quot;max&quot; then
+	toggle = matches[3]
 else
-	echo(&quot;Only priority may be set to a number.\n&quot;)
+	echo(&quot;Only priority or max may be set to a number.\n&quot;)
 	return
 end
 mobDB:set(mob, matches[2], toggle)
@@ -593,7 +595,7 @@ mobDB:set(mob, matches[2], toggle)
 echo(&quot;Mob &quot;..mob..&quot; &quot;..matches[2]..&quot; set to &quot;..toggle..&quot;\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
-                    <regex>^jp bash (priority|aggro|team) (on|off|\d+) (.+)$</regex>
+                    <regex>^jp bash (priority|aggro|team|max) (on|off|\d+) (.+)$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -1331,6 +1333,7 @@ function JP_bash_now()
 		local num_aggro = 0
 		local num_team = 0
 		local num_total = 0
+		local mob_totals = {}
 
 		for b = 1, #bash do
 			local priority = mobDB:get(bash[b].name, &quot;priority&quot;)
@@ -1350,6 +1353,11 @@ function JP_bash_now()
 			if bash[b].number == currentMob then priority = priority + 200 end
 			pbash[bash[b].number] = priority
 			num_total = num_total + 1
+			if not mob_totals[bash[b].name] then 
+				mob_totals[bash[b].name] = 1 
+			else
+				mob_totals[bash[b].name] = mob_totals[bash[b].name] + 1
+			end
 		end
 	
 		local key, value
@@ -1364,6 +1372,17 @@ function JP_bash_now()
 			end
 		end	
 
+		for key, value in pairs(mob_totals) do
+			--echo(&quot;Key: &quot;..key..&quot; value: &quot;..value..&quot;\n&quot;)
+			local maxMobs = mobDB:get(key, &quot;max&quot;)
+			maxMobs = tonumber(maxMobs)
+			--echo(&quot;Maxmobs: &quot;..maxMobs..&quot;\n&quot;)
+			if maxMobs ~= nil and maxMobs &lt; value then
+				echo(&quot;Too many mobs of the mob '&quot;..key..&quot;'\n&quot;)
+				echo(&quot;Max: &quot;..maxMobs..&quot; you have &quot;..value..&quot;\n&quot;)
+				return false
+			end
+		end
 
 		local maxBash = JPAreaDB:get(area, &quot;s_bmax&quot;)
 		local bashCommand = JPSettingsDB:get(&quot;bash&quot;, &quot;command&quot;)
