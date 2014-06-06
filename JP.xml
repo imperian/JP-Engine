@@ -1083,6 +1083,7 @@ function JP_new_room()
 		JPSettingsDB:set(&quot;quest&quot;,&quot;room_done&quot;, &quot;no&quot;)
 		JPTables.movement.oldRoom = JPTables.movement.currentRoom
 		JPTables.movement.room_changing = false
+		--JPTables.attacking.currentMob = nil
 	end
 end
 
@@ -1303,6 +1304,7 @@ function JP_bash_now()
 
 	local number, data, bash, room, area, mobDB
 	room = JPTables.movement.currentRoom
+	currentMob = JPTables.attacking.currentMob
 	area = getRoomArea(room)
 
 	if not area then return false end
@@ -1345,6 +1347,7 @@ function JP_bash_now()
 			if team == nil or team == &quot;no&quot; then team = 0 else team = 50 end
 			priority = priority + team
 			num_team = num_team + team / 50
+			if bash[b].number == currentMob then priority = priority + 200 end
 			pbash[bash[b].number] = priority
 			num_total = num_total + 1
 		end
@@ -1367,8 +1370,9 @@ function JP_bash_now()
 
 		if not bashCommand then bashCommand = &quot;attack&quot; end
 
-		if not maxBash or tonumber(maxBash) &gt;= (num_total) then		
+		if b == currentMob or not maxBash or tonumber(maxBash) &gt;= (num_total) then		
 			send(bashCommand..&quot; &quot;..b)
+			JPTables.attacking.currentMob = b
 			return true
 		else
 			echo(&quot;Too many mobs!\n&quot;)
@@ -1591,6 +1595,7 @@ JPTables.messages = JPTables.messages or {}
 JPTables.msg = JPTables.msg or {}
 JPTables.msg.data = JPTables.msg.data or {}
 JPTables.msg.done = JPTables.msg.done or {}
+JPTables.attacking = JPTables.attacking or {}
 </script>
                     <eventHandlerList/>
                 </Script>
@@ -1969,6 +1974,505 @@ end
 -- Note that you can also use external Scripts --
 -------------------------------------------------
 JPThingDB = JPThingDB or JPDB:new({name = &quot;thing.jpdb&quot;})</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>huge</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+JPHuge = {}
+local hex = &quot;0123456789ABCDEF&quot;
+
+local MODP_2048 = 
+	&quot;FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1&quot; ..
+	&quot;29024E088A67CC74020BBEA63B139B22514A08798E3404DD&quot; ..
+	&quot;EF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245&quot; ..
+	&quot;E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED&quot; ..
+	&quot;EE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3D&quot; ..
+	&quot;C2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F&quot; ..
+	&quot;83655D23DCA3AD961C62F356208552BB9ED529077096966D&quot; ..
+	&quot;670C354E4ABC9804F1746C08CA18217C32905E462E36CE3B&quot; ..
+	&quot;E39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9&quot; ..
+	&quot;DE2BCBF6955817183995497CEA956AE515D2261898FA0510&quot; ..
+	&quot;15728E5A8AACAA68FFFFFFFFFFFFFFFF&quot;
+
+local MODP_1024 = 
+	&quot;B10B8F96A080E01DDE92DE5EAE5D54EC52C99FBCFB06A3C6&quot; ..
+	&quot;9A6A9DCA52D23B616073E28675A23D189838EF1E2EE652C0&quot; ..
+	&quot;13ECB4AEA906112324975C3CD49B83BFACCBDD7D90C4BD70&quot; ..
+	&quot;98488E9C219A73724EFFD6FAE5644738FAA31A4FF55BCCC0&quot; ..
+	&quot;A151AF5F0DC8B4BD45BF37DF365C1A65E68CFDA76D4DA708&quot; ..
+	&quot;DF1FB2BC2E4A4371&quot;
+
+local MODG_1024 =
+	&quot;A4D1CBD5C3FD34126765A442EFB99905F8104DD258AC507F&quot; ..
+	&quot;D6406CFF14266D31266FEA1E5C41564B777E690F5504F213&quot; ..
+	&quot;160217B4B01B886A5E91547F9E2749F4D7FBD7D3B9A92EE1&quot; ..
+	&quot;909D0D2263F80A76A6A24C087A091F531DBF0A0169B6A28A&quot; ..
+	&quot;D662A4D18E73AFA32D779D5918D08BC8858F4DCEF97C2A24&quot; ..
+	&quot;855E6EEB22B3B2E5&quot;
+
+function JPHuge.print(self)
+	local i = self:len()
+
+	local j
+	for j = 1, i do 
+		echo(tostring(self:byte(j))..&quot;.&quot;)
+	end
+	echo(&quot;\n&quot;)
+end
+
+function JPHuge.hexprint(self)
+	local i = self:len()
+
+	local j
+	for j = 1, i do
+		local val, hi, low
+		val = self:byte(j)
+		low = (val % 16) + 1
+		high = math.floor(val / 16) + 1
+		local res = hex:sub(high,high) .. hex:sub(low,low)
+		echo(res)
+	end
+	echo(&quot;\n&quot;)
+end
+
+function JPHuge.hex_to_huge(text)
+	local i = text:len()
+	text = string.upper(text)
+	local result = &quot;&quot;
+	local firstbyte, secondbyte
+
+	repeat
+		local char = text:sub(i,i)
+		local f,s = hex:find(char)
+		local byte = f - 1
+
+		if not secondbyte then
+			secondbyte = byte
+		else
+			firstbyte = byte
+
+			result = string.char(firstbyte * 16 + secondbyte) .. result
+			secondbyte = nil
+			firstbyte = nil
+		end
+		i = i - 1
+	until i == 0
+
+	if secondbyte then
+		result = string.char(secondbyte) .. result
+		secondbyte = nil
+	end
+
+	return result
+end
+
+function JPHuge.add(a,b)
+	local i = a:len()
+	local j = b:len()
+
+	local carry = 0
+	local sum = 0
+	local result = &quot;&quot;
+	while i &lt; j do
+		a = string.char(0) .. a
+		i = a:len()
+	end
+
+	repeat
+		if j &gt; 0 then
+			sum = a:byte(i) + b:byte(j) + carry
+			j = j - 1
+		else
+			sum = a:byte(i) + carry
+		end
+
+		i = i - 1
+		if sum &gt; 255 then carry = 1 else carry = 0 end
+		result = string.char( sum % 256 ) .. result
+	until i == 0
+
+	if carry == 1 then
+		result = string.char( 1 ) .. result
+	end
+
+	return result
+end
+
+function JPHuge.sub(a,b)
+
+	local i = a:len()
+	local j = b:len()
+	local borrow = 0
+	local difference
+	local result = &quot;&quot;
+
+	if j &gt; i then return nil, &quot;Error. Subtraction result is negative.&quot; end
+
+	repeat
+		if j &gt; 0 then
+			difference = a:byte(i) - b:byte(j) - borrow
+			j = j - 1
+		else
+			difference = a:byte(i) - borrow
+		end
+		i = i - 1
+
+		if difference &lt; 0 then 
+			borrow = 1
+			difference = difference + 256 
+		else 
+			borrow = 0 
+		end
+			
+		result = string.char( difference ) .. result
+	until i == 0
+
+	if borrow &gt; 0 then return nil, &quot;Error. Subtractions result is negative.&quot; end
+
+	while result:byte(1) == 0 and result:len() &gt; 1 do
+		result = result:sub(2,-1)
+	end
+
+	return result
+end
+
+function JPHuge.band(a,b)
+
+	local i = a:len()
+	local j = b:len()
+	local result = &quot;&quot;
+
+
+	while i &lt; j do
+		a = string.char(0) .. a
+		i = a:len()
+	end
+
+	repeat
+		if j &gt; 0 then
+			local byte = 1
+			local bytes = 0
+
+	
+			while byte &lt; 256 do
+
+				local i_b = math.floor(a:byte(i) / byte) % 2
+				local j_b = math.floor(b:byte(j) / byte) % 2
+
+				if i_b == 1 and j_b == 1 then
+					bytes = bytes + byte
+				end
+				byte = byte * 2			
+			end
+
+			result = string.char(bytes) .. result
+			j = j - 1
+		else
+			result = string.char(0) .. result
+		end
+		i = i - 1
+	until i == 0
+
+
+	while result:byte(1) == 0 and result:len() &gt; 1 do
+		result = result:sub(2,-1)
+	end
+	return result
+
+end
+
+function JPHuge.left_shift(a)
+	local result = &quot;&quot;
+	local i = a:len()
+	local carry, oldcarry
+
+	oldcarry = 0
+	repeat
+		local temp = a:byte(i)
+		temp = temp * 2 + oldcarry
+
+		carry = math.floor(temp / 256)
+		result = string.char(temp % 256) .. result
+
+		oldcarry = carry
+
+		i = i - 1
+	until i == 0
+
+	if carry &gt; 0 then
+		result = string.char( carry ) .. result
+	end
+	return result
+
+end
+
+function JPHuge.right_shift(a)
+	local result = &quot;&quot;
+	local i = 1
+	local carry = 0
+	local oldcarry = 0
+	
+	repeat
+		local temp = a:byte(i)
+		temp = temp 
+		carry = temp % 2
+		temp = math.floor(temp / 2)
+		temp = temp + oldcarry * 128
+		--echo(&quot;temp: &quot;..temp..&quot; carry: &quot;..carry..&quot;\n&quot;)
+		oldcarry = carry
+
+		result = result .. string.char(temp)
+
+		i = i + 1
+	until i &gt; a:len()
+		
+	while result:byte(1) == 0 and result:len() &gt; 1 do
+		result = result:sub(2,-1)
+	end
+
+	return result
+
+
+end
+
+
+function JPHuge.mul(a,b)
+	local temp = a
+	local result = string.char(0)
+
+	local i = b:len()
+
+	repeat
+		local mask = 1
+		while mask &lt; 256 do
+
+			if JPHuge.band(b:sub(i,i), string.char(mask)) ~= string.char(0) then
+				result = JPHuge.add(result, temp)
+			end
+			temp = JPHuge.left_shift(temp)
+			mask = mask * 2
+		end
+
+		i = i - 1
+	until i == 0
+
+	return result
+end
+
+function JPHuge.compare(a,b)
+	local i = a:len()
+	local j = b:len()
+
+	if i &gt; j then
+		return 1
+	end
+	if i &lt; j then
+		return -1 
+	end
+
+	i = 1
+	j = 1
+
+	while i &lt;= a:len() and j &lt;= b:len() do
+		if a:byte(i) &lt; b:byte(j) then
+			return -1
+		elseif a:byte(i) &gt; b:byte(j) then
+			return 1
+		end
+		i = i + 1
+		j = j + 1
+	end
+
+	return 0
+end
+
+function JPHuge.div_raw(dividend, divisor, modulus)
+
+	local bit_size = 0
+	local bit_position = 0
+	local quotient = &quot;&quot;
+
+	while JPHuge.compare(divisor, dividend) &lt; 0 do
+		divisor = JPHuge.left_shift(divisor)
+		bit_size = bit_size + 1
+	end	
+
+
+	local q_size = math.floor(bit_size / 8) + 1
+
+	local i = 1
+	if not modulus then 
+		for i = 1, q_size do
+			quotient = string.char(0) .. quotient
+		end
+	end
+
+	--echo(&quot;Bit_size = &quot;..tostring(bit_size)..&quot;\n&quot;)
+
+	bit_position = 8 - (bit_size % 8) - 1
+
+	repeat
+		--echo(&quot;Here\n&quot;)
+		--JPHuge.print(divisor)
+		--JPHuge.print(dividend)
+		if JPHuge.compare(divisor, dividend) &lt;= 0 then
+			--echo(&quot;in.\n&quot;)
+
+			dividend = JPHuge.sub(dividend, divisor)
+			--JPHuge.print(dividend)
+
+			if not modulus then
+				local q_spot = math.floor(bit_position / 8) + 1
+				local temp_quotient = &quot;&quot;
+
+				if q_spot &gt; 1 then
+					temp_quotient = quotient:sub(1,(q_spot-1))
+				end
+				--temp_quotient = temp_quotient .. quotient:sub(q_spot, q_spot)
+				local q_val = quotient:byte(q_spot)
+				local q_bit = bit_position % 8
+				local q_set = 128 / ( 2 ^ q_bit )
+				local q_magic = 255 - q_set
+	
+
+				q_magic = JPHuge.band(string.char(q_magic), string.char(q_val))
+				q_val = q_magic:byte() + q_set
+
+
+
+				temp_quotient = temp_quotient .. string.char(q_val)
+
+
+				if q_spot &lt; quotient:len() then
+					temp_quotient = temp_quotient .. quotient:sub(q_spot+1,-1)
+				end
+				quotient = temp_quotient
+				--JPHuge.print(quotient)
+			end
+			
+		end
+
+		if bit_size &gt; 0 then
+			divisor = JPHuge.right_shift( divisor )
+		end
+		bit_position = bit_position + 1
+
+		bit_size = bit_size - 1
+
+	until bit_size &lt; 0
+	
+	--echo(&quot;Result:\n&quot;)
+	--JPHuge.print(dividend)
+	--JPHuge.print(quotient)
+
+	return quotient, dividend
+end
+
+function JPHuge.div(a,b)
+	local q, d = JPHuge.div_raw(a,b,nil)
+	return q, d
+end
+
+function JPHuge.mod(a,b)
+
+	local q, d = JPHuge.div_raw(a,b,true)
+
+	return d
+end
+
+-- computer c = m^e mod n
+function JPHuge.mod_pow(m, e, n)
+	local i = e:len()
+	local mask
+	local tmp1, tmp2 = m, string.char(0)
+	local result = string.char(1)
+
+	--JPHuge.hexprint(m)
+	--JPHuge.hexprint(e)
+	--JPHuge.hexprint(n)
+	--JPHuge.hexprint(tmp1)
+
+	repeat
+		mask = 1
+		while mask &lt; 256 do
+			--echo(&quot;Mask: &quot;..mask..&quot;\n&quot;)
+			if JPHuge.band(e:sub(i,i), string.char(mask)) ~= string.char(0) then
+				--echo(&quot;yes.\n&quot;)
+				--JPHuge.hexprint(tmp1)
+				result = JPHuge.mul(result, tmp1)
+				result = JPHuge.mod(result, n)
+			end
+			tmp2 = tmp1
+			tmp1 = JPHuge.mul(tmp1, tmp2)
+			
+			tmp1 = JPHuge.mod(tmp1, n)
+			--JPHuge.hexprint(tmp1)
+			mask = mask * 2
+		end
+		i = i - 1
+	until i == 0
+				
+	return result
+end
+
+function JPHuge.dh_agree(p, g, a)
+	return JPHuge.mod_pow(g, a, p)
+end
+
+function JPHuge.dh_finalize(p, y, a)
+	return JPHuge.mod_pow(y, a, p)
+end
+
+function JPHuge.test()
+	local p, g, a, b, ys, yc, zs, zc
+	--p = JPHuge.hex_to_huge(&quot;0773&quot;)
+	--p = JPHuge.hex_to_huge(MODP_2048)
+	--p = string.char(11)
+	p = JPHuge.hex_to_huge(&quot;1FFFFFFFFFFFFFFFFFFFFFFFBB&quot;)
+	g = string.char(2)
+
+	--p = JPHuge.hex_to_huge(MODP_1024)
+	--g = JPHuge.hex_to_huge(MODG_1024)
+
+	a = JPHuge.hex_to_huge(&quot;3B8E349FDEADBEEF&quot;)
+	b = JPHuge.hex_to_huge(&quot;83DE23ABDEADBEEF&quot;)
+	--a = string.char(9)
+	--b = string.char()
+
+	echo(&quot;Compiling.\n&quot;)
+	ys = JPHuge.dh_agree(p, g, a)
+	JPHuge.print(ys)
+	yc = JPHuge.dh_agree(p, g, b)
+	JPHuge.print(yc)
+
+	zs = JPHuge.dh_finalize(p, yc, a)
+	zc = JPHuge.dh_finalize(p, ys, b)
+
+	JPHuge.print(zs)
+	JPHuge.print(zc)
+
+end
+
+function JPHuge.test2()
+	local top = JPHuge.hex_to_huge(&quot;100000000&quot;)
+	local bot = JPHuge.hex_to_huge(&quot;1E240&quot;)
+
+
+	local result = JPHuge.mod(top, bot)
+
+
+	JPHuge.hexprint(result)
+end
+
+
+</script>
                     <eventHandlerList/>
                 </Script>
             </ScriptGroup>
