@@ -1369,6 +1369,16 @@ function JP_bash_now()
 		local bashCommand = JPSettingsDB:get(&quot;bash&quot;, &quot;command&quot;)
 
 		if not bashCommand then bashCommand = &quot;attack&quot; end
+	
+		local hp, hpmax = tonumber(JPTables.Vitals.hp), tonumber(JPTables.Vitals.maxhp)
+
+		if b ~= currentMob and (100 * hp / hpmax) &lt; 90 then
+			-- Wait to heal if no aggro or team
+			if (num_team + num_aggro) == 0 then
+				return true
+			end
+
+		end
 
 		if b == currentMob or not maxBash or tonumber(maxBash) &gt;= (num_total) then		
 			send(bashCommand..&quot; &quot;..b)
