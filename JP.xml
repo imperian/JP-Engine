@@ -226,6 +226,102 @@ deselect()
                     </regexCodePropertyList>
                 </Trigger>
             </TriggerGroup>
+            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>Stat Tracking</name>
+                <script></script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList/>
+                <regexCodePropertyList/>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Equilibruim Taken</name>
+                    <script>JPTables.stats.eq = &quot;0&quot;</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>Equilibrium Taken:</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Balance Taken</name>
+                    <script>JPTables.stats.bal = &quot;0&quot;</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>Balance Taken:</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Eq gained</name>
+                    <script>JPTables.stats.eq = &quot;1&quot;</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>You have regained your mental equilibrium.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bal gained</name>
+                    <script>JPTables.stats.bal = &quot;1&quot;</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>You have recovered balance.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+            </TriggerGroup>
         </TriggerGroup>
     </TriggerPackage>
     <TimerPackage>
@@ -309,6 +405,18 @@ jpf.echo(&quot;Color set to &quot;..matches[2]..&quot;!\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp set color (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Stop!</name>
+                    <script>JPSettingsDB:set(&quot;active&quot;, &quot;bash&quot;, &quot;no&quot;)
+JPSettingsDB:set(&quot;active&quot;, &quot;quest&quot;, &quot;no&quot;)
+JPSettingsDB:set(&quot;active&quot;, &quot;walk&quot;, &quot;no&quot;)
+JPTables.walkList = JPList.new()
+mmp.stop()
+echo(&quot;Everything stopped!\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp stop$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -969,6 +1077,15 @@ function JP_vitals_update()
 
 	JPTables.Vitals = gmcp.Char.Vitals
 
+	if JPTables.Vitals.bal == nil then
+		JPTables.stats.blackout = &quot;1&quot;
+		raiseEvent(&quot;JP_onPrompt&quot;)
+	else
+		JPTables.stats.blackout = &quot;0&quot;
+		JPTables.stats.bal = JPTables.Vitals.bal
+		JPTables.stats.eq = JPTables.Vitals.eq
+	end
+
 end
 
 registerAnonymousEventHandler(&quot;gmcp.Char.Vitals&quot;, &quot;JP_vitals_update&quot;)</script>
@@ -986,7 +1103,11 @@ registerAnonymousEventHandler(&quot;gmcp.Char.Vitals&quot;, &quot;JP_vitals_upda
 function JP_onPrompt()
 	local eqbal, prone, stun
 
-	if JPTables.Vitals.bal == &quot;1&quot; and JPTables.Vitals.eq == &quot;1&quot; then eqbal = true else eqbal = false end
+	if JPTables.Vitals.bal == nil then 
+		if JPTables.stats.bal == &quot;1&quot; and JPTables.stats.eq == &quot;1&quot; then eqbal = true else eqbal = false end
+	else
+		if JPTables.Vitals.bal == &quot;1&quot; and JPTables.Vitals.eq == &quot;1&quot; then eqbal = true else eqbal = false end
+	end
 	if JPTables.Vitals.prone == &quot;1&quot; then prone = true else prone = false end
 	if JPTables.Vitals.stunned == &quot;1&quot; then stun = true else stun = false end
 
@@ -1625,6 +1746,7 @@ JPTables.msg = JPTables.msg or {}
 JPTables.msg.data = JPTables.msg.data or {}
 JPTables.msg.done = JPTables.msg.done or {}
 JPTables.attacking = JPTables.attacking or {}
+JPTables.stats = JPTables.stats or {}
 </script>
                     <eventHandlerList/>
                 </Script>
