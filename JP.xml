@@ -603,7 +603,7 @@ if not JPAreaDB:exists(area) then echo(&quot;No data.\n&quot;);return end
 JPAreaDB:showData(area)</script>
                     <command></command>
                     <packageName></packageName>
-                    <regex>^jp showa$</regex>
+                    <regex>^jp area show$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Create Area</name>
@@ -844,7 +844,7 @@ end
 </script>
                     <command></command>
                     <packageName></packageName>
-                    <regex>^jp msg area (\w+)$</regex>
+                    <regex>^jp area msg (\w+)$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Load Area Data from Message</name>
@@ -1094,6 +1094,149 @@ jpf.echo(&quot;Removed from list.\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp custom list del (\w+) (\d+)$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Help Files</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Main help</name>
+                    <script>jpf.echo(jpf.center(&quot;JP Engine Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Main Commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;-----------------&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp conf&quot;, 30, &quot; &quot;) .. &quot;- Show system-wide configuration settings.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp stop&quot;, 30, &quot; &quot;) .. &quot;- Stops and turns everything off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set &lt;thing&gt; &lt;value&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets individual conf values. JP SET for more info.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Walk Commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;-----------------&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp determine path&quot;, 30, &quot; &quot;) .. &quot;- Calculates a walk path in the area.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp clear path&quot;, 30, &quot; &quot;) .. &quot;- Clears the current path.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp (no_walk|walk) [room]&quot;, 30, &quot; &quot;) .. &quot;- Sets whether determin path will go in a room. Room&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  defaults to current room if omitted&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Area Commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;-----------------&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Use JP AREA for commands including bashing and questing.&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Custom Commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;-----------------&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Use JP CUSTOM for commands and details.&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Talk Commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;-----------------&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Use JP TALK for commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set help</name>
+                    <script>jpf.echo(jpf.center(&quot;JP Set Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set bash (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns autobashing on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set quest (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns autoquesting on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set walk (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns autowalking on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set custom (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns custom on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set all (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns all the above on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set color (color)&quot;, 30, &quot; &quot;) .. &quot;- Sets the default color for messages.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  Color must be a valid Mudlet color name.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set walk &lt;depth&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the longest walk path for determine path.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  Defaults to 100.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp set$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Area Help</name>
+                    <script>jpf.echo(jpf.center(&quot;JP Area Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash(on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Targets the mob for bashing.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  Mob is the mob's short description (info here).&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash aggro (on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- On means the mob is aggro.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash team (on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- On means the mob teams.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash priority &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the mobs bashing priority. Higher numbers get hit&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash max &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max number of the mob in room before skipping.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash max &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max number of the mob in room before skipping.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  first. Team += 50 aggro += 100.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area bmax &lt;#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max total # of mobs in a room.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area (walk|no_walk) [room]&quot;, 30, &quot; &quot;) .. &quot;- Same as general command but for the current area.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area show&quot;, 30, &quot; &quot;) .. &quot;- Show current area data.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp questadd &lt;mob#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Adds an action to execute when seeing mob #.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp questdel &lt;mob#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Deletes all actions associated with mob #.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area msg &lt;ply&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sends the current area data to another player via&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  in-game message.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp area$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Custom Help</name>
+                    <script>jpf.echo(jpf.center(&quot;JP Custom Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp custom create &lt;name&gt;&quot;, 30, &quot; &quot;) .. &quot;- Creates a new custom.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp custom &lt;name&gt; (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns the custom on or off&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(jpf.center(&quot;Still in testing, additional information forthcoming.&quot;, 88), 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Talk Help</name>
+                    <script>jpf.echo(jpf.center(&quot;JP Talk Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp password &lt;name&gt; &lt;password&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the encryption key for &lt;name&gt;. &lt;Name&gt; must set the&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  identical key for you for this to work.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;.&lt;name&gt; &lt;msg&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sends an encrypted message to &lt;name&gt;. Password must be&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  set for &lt;name&gt;.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jpet &lt;name&gt; &lt;msg&gt;&quot;, 30, &quot; &quot;) .. &quot;- Same as above.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp talk$</regex>
                 </Alias>
             </AliasGroup>
         </AliasGroup>
@@ -3657,7 +3800,95 @@ end
 
 function jpf.substitute(var)
 	return tostring(JPTables.custom[var])
-end</script>
+end
+
+function jpf.center(text, size, char)
+	if text == nil then return end
+	size = tonumber(size) or 90
+	char = char or &quot; &quot;
+
+	local half = math.floor(size / 2)
+	local text_half = math.ceil(text:len() / 2)
+
+	half = half - text_half
+
+	local ret 
+
+	ret = string.rep(char:sub(1,1), half) .. text .. string.rep(char:sub(1,1), half)
+
+	--echo(&quot;len: &quot; .. tostring( ret:len() ) ..&quot;\n&quot;)
+
+	while ret:len() &lt; size do
+		ret = ret .. char:sub(1,1)
+	end
+
+	return ret
+end
+
+function jpf.left(text, size, char)
+	if text == nil then return end
+
+	local ret
+
+	size = tonumber(size) or text:len()
+	char = char or &quot; &quot;
+
+	local add = size - text:len()
+
+	if add &gt; 0 then
+		ret = text .. string.rep(char:sub(1,1), add)
+	elseif add &lt; 0 then
+		ret = text:sub(1,size-1) .. &quot;$&quot;
+	else
+		ret = text
+	end
+	return ret
+end
+
+function jpf.right(text, size, char)
+	if text == nil then return end
+
+	local ret
+
+	size = tonumber(size) or text:len()
+	char = char or &quot; &quot;
+
+	local add = size - text:len()
+
+	if add &gt; 0 then
+		ret = string.rep(char:sub(1,1), add) .. text
+	elseif add &lt; 0 then
+		ret = text:sub(1,size-1) .. &quot;$&quot;
+	else
+		ret = text
+	end
+	return ret
+end
+
+function jpf.border(text, size, char)
+
+	if text == nil then return end
+
+	local ret
+
+	--echo(&quot;len: &quot; .. text:len() .. &quot;\n&quot;)
+
+	size = tonumber(size) or text:len() + 2
+	char = char or &quot;|&quot;
+
+	local add = size - text:len() - 2
+
+	if add &gt; 0 then
+		ret = char:sub(1,1) .. text .. string.rep(&quot; &quot;, add) .. char:sub(1,1)
+	elseif add &lt; 0 then
+		ret = char:sub(1,1) .. text:sub(1,size-3) .. &quot;$&quot; .. char:sub(1,1)
+	else
+		ret = char:sub(1,1) .. text .. char:sub(1,1)
+	end
+	return ret
+
+end
+</script>
                     <eventHandlerList/>
                 </Script>
             </ScriptGroup>
