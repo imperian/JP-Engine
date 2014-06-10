@@ -375,13 +375,14 @@ local toggle
 
 if matches[3] == &quot;on&quot; then toggle = &quot;yes&quot; else toggle = &quot;no&quot; end
 
-if setting == &quot;walk&quot; or setting == &quot;bash&quot; or setting == &quot;quest&quot; then
+if setting == &quot;walk&quot; or setting == &quot;bash&quot; or setting == &quot;quest&quot; or setting == &quot;custom&quot; then
 	JPSettingsDB:set(&quot;active&quot;, setting, toggle)
 	echo(&quot;Setting &quot;..setting..&quot; set &quot;..matches[3]..&quot;.\n&quot;)
 elseif setting == &quot;all&quot; then
 	JPSettingsDB:set(&quot;active&quot;, &quot;bash&quot;, toggle)
 	JPSettingsDB:set(&quot;active&quot;, &quot;quest&quot;, toggle)
 	JPSettingsDB:set(&quot;active&quot;, &quot;walk&quot;, toggle)
+	JPSettingsDB:set(&quot;active&quot;, &quot;custom&quot;, toggle)
 	echo(&quot;Setting &quot;..setting..&quot; set &quot;..matches[3]..&quot;.\n&quot;)
 else
 	echo(&quot;Cannot toggle &quot;..setting..&quot;.\n&quot;)
@@ -411,6 +412,7 @@ jpf.echo(&quot;Color set to &quot;..matches[2]..&quot;!\n&quot;)</script>
                     <script>JPSettingsDB:set(&quot;active&quot;, &quot;bash&quot;, &quot;no&quot;)
 JPSettingsDB:set(&quot;active&quot;, &quot;quest&quot;, &quot;no&quot;)
 JPSettingsDB:set(&quot;active&quot;, &quot;walk&quot;, &quot;no&quot;)
+JPSettingsDB:set(&quot;active&quot;, &quot;custom&quot;, &quot;no&quot;)
 JPTables.walkList = JPList.new()
 mmp.stop()
 echo(&quot;Everything stopped!\n&quot;)</script>
@@ -668,7 +670,7 @@ echo(&quot;Area &quot;..area..&quot; setting &quot;..setting..&quot; set to &quo
 </script>
                     <command></command>
                     <packageName></packageName>
-                    <regex>^jp seta (\w+) (.+)$</regex>
+                    <regex>^jp area (bmax) (.+)$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Bash settings</name>
@@ -777,11 +779,13 @@ JPPlayerDB.data = {}
 JPAreaDB.data = {}
 JPRoomDB.data = {}
 JPThingDB.data = {}
+JPCustomDB.data = {}
 JPSettingsDB:load()
 JPPlayerDB:load()
 JPAreaDB:areaLoad() -- special
 JPRoomDB:load()
 JPThingDB:load()
+JPCustomDB:load()
 echo(&quot;Done\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
@@ -794,13 +798,14 @@ JPPlayerDB:save()
 JPAreaDB:save()
 JPRoomDB:save()
 JPThingDB:save()
+JPCustomDB:save()
 echo(&quot;Done.\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp save all$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
-                    <name>Send the area in a message</name>
+                    <name>MSG Area</name>
                     <script>local room, area
 room = JPTables.movement.currentRoom
 area = getRoomArea(room)
@@ -953,6 +958,142 @@ display(plaintext)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp test enc (.+)$</regex>
+                </Alias>
+            </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Custom</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Show</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+
+JPCustomDB:showData(string.lower(matches[2]))</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom show (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set condition</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+
+JPCustomDB:set(string.lower(matches[2]), &quot;condition&quot;, matches[3])
+jpf.echo(&quot;Condition set.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom set cond (\w+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Activate/Deactivate</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+
+local toggle
+if matches[3] == &quot;on&quot; then toggle = &quot;yes&quot; else toggle = &quot;no&quot; end
+
+JPCustomDB:set(string.lower(matches[2]), &quot;active&quot;, toggle)
+jpf.echo(&quot;Custom &quot;..string.lower(matches[2])..&quot;set to &quot;..toggle..&quot;.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom (\w+) (on|off)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Set action</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+
+JPCustomDB:set(string.lower(matches[2]), &quot;action&quot;, matches[3])
+jpf.echo(&quot;Action set.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom set act (\w+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Create custom</name>
+                    <script>if JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom already exist.\n&quot;)
+	return
+end
+
+JPCustomDB:add(string.lower(matches[2]))
+jpf.echo(&quot;Custom created.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom create (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Show List</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+local list = JPCustomDB:get(string.lower(matches[2]), &quot;list&quot;)
+
+local i, item
+
+jpf.echo(&quot;Items in list:\n&quot;)
+for i, item in ipairs(list) do
+	jpf.echo(&quot;[&quot;..tostring(i)..&quot;] &quot;..item..&quot;\n&quot;)
+end
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom list show (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Add to list</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+
+local custom = string.lower(matches[2])
+local item = string.lower(matches[3])
+local list = JPCustomDB:get(custom, &quot;list&quot;) or {}
+
+table.insert(list, item)
+
+JPCustomDB:set(custom, &quot;list&quot;, list)
+
+jpf.echo(&quot;Added '&quot;..item..&quot;' to list.\n&quot;)
+
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom list add (\w+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Del from list</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+
+local custom = string.lower(matches[2])
+local item = tonumber(matches[3])
+local list = JPCustomDB:get(custom, &quot;list&quot;)
+
+table.remove(list, item)
+
+JPCustomDB:set(custom, &quot;list&quot;, list)
+
+jpf.echo(&quot;Removed from list.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom list del (\w+) (\d+)$</regex>
                 </Alias>
             </AliasGroup>
         </AliasGroup>
@@ -1117,6 +1258,8 @@ function JP_onPrompt()
 	-- Check for delay
 	if JPTables.delay == &quot;yes&quot; then return end
 
+	if JPTables.Vitals.waitforvitals == true then return end
+
 	-- Count Players
 	local ply, data, count
 
@@ -1142,6 +1285,7 @@ function JP_onPrompt()
 		expandAlias(JPList.popright(JP_eqbalqueue))
 		JPTables.delay=&quot;yes&quot;
 		tempTimer(.2, [[JPTables.delay=&quot;no&quot;;raiseEvent(&quot;JP_onPrompt&quot;)]])
+		JPTables.Vitals.waitforvitals = true
 		return
 	end
 
@@ -1150,7 +1294,8 @@ function JP_onPrompt()
 		if JP_bash_now() then 
 			JPTables.delay=&quot;yes&quot;
 			tempTimer(.2, [[JPTables.delay=&quot;no&quot;;raiseEvent(&quot;JP_onPrompt&quot;)]])
-			return 
+			JPTables.Vitals.waitforvitals = true
+			return
 		end
 	end
 
@@ -1162,7 +1307,15 @@ function JP_onPrompt()
 		end
 	end
 
-	-- Items from anywhere
+	-- Custom
+
+	if JPSettingsDB:get(&quot;active&quot;, &quot;custom&quot;) == &quot;yes&quot; then
+		if JP_script_now() then
+			raiseEvent(&quot;JP_onPrompt&quot;)
+			JPTables.Vitals.waitforvitals = true
+			return
+		end
+	end
 
 	-- Wait to heal
 	local hp, hpmax = tonumber(JPTables.Vitals.hp), tonumber(JPTables.Vitals.maxhp)
@@ -1228,6 +1381,7 @@ function JP_onLoad()
 	JPAreaDB:areaLoad() -- special
 	JPRoomDB:load()
 	JPThingDB:load()
+	JPCustomDB:load()
 end
 
 function JP_onExit()
@@ -1236,6 +1390,7 @@ function JP_onExit()
 	JPAreaDB:save()
 	JPRoomDB:save()
 	JPThingDB:save()
+	JPCustomDB:save()
 end
 
 registerAnonymousEventHandler(&quot;sysLoadEvent&quot;, &quot;JP_onLoad&quot;)
@@ -1631,6 +1786,202 @@ function JP_thing_now()
 end</script>
                     <eventHandlerList/>
                 </Script>
+                <Script isActive="no" isFolder="no">
+                    <name>Custom Script</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+-- Custom Events
+-- Format
+-- chk_item_here -- checks if something is here by item number
+-- chk_ply_here -- checks for a player
+-- chk_thing_here -- looks for things
+-- chk_area_here -- checks if in an area
+-- chk_room_here -- checks in in a room
+-- chk_item_inv -- checks if item is in inventory
+-- chk_thing_inv -- checks if thing is in inventory
+
+function JP_custom_now()
+	local k, v
+
+	local room, area, plys, items, things
+
+	room = JPTables.movement.currentRoom
+	area = getRoomArea(room)
+	room = tostring(room)
+	area = tostring(area)
+
+	for k, v in pairs(JPCustomDB.data) do
+		local cItem, cPly, cThing, cArea, cRoom
+		local check = {}
+		local which = {}
+		cItem = v[&quot;chk_item_here&quot;]
+		cPly = v[&quot;chk_ply_here&quot;]
+		cThing = v[&quot;chk_thing_here&quot;]
+		cArea = v[&quot;chk_area_here&quot;]
+		cRoom = v[&quot;chk_room_here&quot;]
+		cItemInv = v[&quot;chk_item_inv&quot;]
+		cThingInv = v[&quot;chk_thing_inv&quot;]
+	
+		if not cArea or cArea[area] then check.area = true; which.area = area end
+		if not cRoom or cRoom[room] then check.room = true; which.room = room end
+
+		if cItem then
+			local a,b
+			for a,b in pairs(JPTables.inRoom.Replicas) do
+				if not which.item and cItem[a] ~= nil then
+					which.item = a
+					check.item = true
+				end
+			end
+		else
+			check.item = true
+		end
+
+		if cItemInv then
+			local a,b
+			for a,b in pairs(JPTables.inInv) do
+				if not which.iteminv and cItemInv[a] ~= nil then
+					which.iteminv = a
+					check.iteminv = true
+				end
+			end	
+		else
+			check.iteminv = true
+		end
+
+		if cPly then
+			local a,b
+			for a,b in pairs(JPTables.inRoom.Players) do
+				if not which.ply and cPly[string.lower(a)] ~= nil then
+					which.ply = string.lower(a)
+					check.ply = true
+				end
+			end
+		else
+			check.ply = true
+		end
+
+		if cThing then
+			local a,b
+			for a,b in paris(JPTables.inRoom.Replicas) do
+				if not which.thing and cThing[string.lower(b.name)] ~= nil then
+					which.thing = b.id
+					check.thing = true
+				end
+			end
+		else
+			check.thing = true
+		end
+
+		if cThingInv then
+			local a,b
+			for a,b in paris(JPTables.inInv) do
+				if not which.thinginv and cThingInv[string.lower(b.name)] ~= nil then
+					which.thinginv = b.id
+					check.thinginv = true
+				end
+			end
+		else
+			check.thinginv = true
+		end
+
+		if check.room and check.area and 
+			check.item and check.ply and 
+			check.thing and check.iteminv and check.thinginv then
+			local acts = v.actions
+			local act
+			for act = 1, #acts do
+
+			end
+		
+		end
+
+		
+
+	end
+	
+end</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Script Script</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+local function iter(db)
+	local i, items, k, v, j
+	items = {}
+	i = 0
+	for k, v in pairs(db.data) do
+		table.insert(items, k)
+		i = i + 1
+	end
+	j = 0
+	return function ()
+		j = j + 1
+		if j &lt;= i then
+			return items[j]
+		end
+	end
+end
+
+function JP_script_now()
+	local db
+
+	for db in iter(JPCustomDB) do
+		--jpf.echo(&quot;Checking db: &quot;..db..&quot;\n&quot;)
+		if JPCustomDB:get(db, &quot;active&quot;) == &quot;yes&quot; and JPCustomDB:get(db,&quot;condition&quot;) and JPCustomDB:get(db,&quot;action&quot;) then
+			--jpf.echo(&quot;IN!\n&quot;)
+			local luaCommand, result
+			luaCommand = &quot;return (&quot; .. JPCustomDB:get(db, &quot;condition&quot;) .. &quot;)&quot;
+			--jpf.echo(&quot;CMD: &quot;..luaCommand..&quot;\n&quot;)
+			JPTables.custom = {}
+			JPTables.custom.id = db
+			local f,e = loadstring(luaCommand)
+			if not f then 
+				echo(&quot;Error: &quot;..e..&quot;\n&quot;)
+				return false
+			else
+				result = f()
+			end
+			--jpf.echo(&quot;Continuing (result: &quot;..tostring(result)..&quot;).\n&quot;)
+			if result == true then
+				luaCommand = JPCustomDB:get(db, &quot;action&quot;)
+				-- substitute the variables
+				luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.substitute)
+				if luaCommand:sub(1,2) == &quot;//&quot; then
+					local cmd = luaCommand:sub(3,-1)
+					--echo(&quot;DO: &quot;..cmd..&quot;\n&quot;)
+					local f,e = loadstring(cmd)
+					if not f then 
+						echo(&quot;Error: &quot;..e..&quot;\n&quot;)
+						return false
+					else
+						f()
+						return true
+					end
+				else
+					List.pushleft(JP_eqbalqueue, luaCommand)
+					cecho(&quot;&lt;green:black&gt;Queued &quot;..luaCommand..&quot;&lt;reset&gt;\n&quot;)
+					return true
+				--expandAlias(acts[act])
+				end
+			end
+		end
+
+	end
+end</script>
+                    <eventHandlerList/>
+                </Script>
             </ScriptGroup>
             <ScriptGroup isActive="yes" isFolder="yes">
                 <name>data</name>
@@ -1747,6 +2098,7 @@ JPTables.msg.data = JPTables.msg.data or {}
 JPTables.msg.done = JPTables.msg.done or {}
 JPTables.attacking = JPTables.attacking or {}
 JPTables.stats = JPTables.stats or {}
+JPTables.custom = JPTables.custom or {}
 </script>
                     <eventHandlerList/>
                 </Script>
@@ -2193,6 +2545,22 @@ function JPHuge.hexprint(self)
 	echo(&quot;\n&quot;)
 end
 
+function JPHuge.tohex(self)
+	local i = self:len()
+	local result = &quot;&quot;
+
+	local j
+	for j = 1, i do
+		local val, hi, low
+		val = self:byte(j)
+		low = (val % 16) + 1
+		high = math.floor(val / 16) + 1
+		local res = hex:sub(high,high) .. hex:sub(low,low)
+		result = result .. res
+	end
+	return result
+end
+
 function JPHuge.hex_to_huge(text)
 	local i = text:len()
 	text = string.upper(text)
@@ -2573,6 +2941,559 @@ function JPHuge.mod_pow(m, e, n)
 	return result
 end
 
+
+function JPHuge.tadd(t1, t2)
+
+	local sign1, mag1, sign2, mag2
+	local result = {}
+	
+	sign1 = t1.sign
+	mag1 = t1.mag
+	sign2 = t2.sign
+	mag2 = t2.mag
+
+	if not (sign1 and sign2 and mag1 and mag2) then
+		return nil, &quot;Invalid signed huge tables.&quot;
+	end
+
+	if sign1 * sign2 &gt; 0 then -- Both the same sign, add
+		result.mag = JPHuge.add(mag1, mag2)
+		result.sign = sign1 -- arbitrary which you pick as they are the same
+
+	else
+		local cmp = JPHuge.compare(mag1, mag2)
+
+		if cmp == 0 then
+			result.mag = string.char(0)
+			result.sign = 1
+		elseif cmp == 1 then
+			result.mag = JPHuge.sub(mag1, mag2)
+			result.sign = sign1
+		else
+			result.mag = JPHuge.sub(mag2,mag1)
+			result.sign = sign2
+		end
+	end
+
+	return result
+end
+
+function JPHuge.tsub(t1, t2)
+	local sign1, mag1, sign2, mag2
+	
+	sign1 = t1.sign
+	mag1 = t1.mag
+	sign2 = t2.sign
+	mag2 = t2.mag
+
+	if not (sign1 and sign2 and mag1 and mag2) then
+		return nil, &quot;Invalid signed huge tables.&quot;
+	end
+
+	sign2 = sign2 * -1
+
+	return JPHuge.tadd({sign = sign1, mag = mag1}, {sign = sign2, mag = mag2})
+
+end
+
+function JPHuge.tmul(t1, t2)
+
+	local sign1, mag1, sign2, mag2
+	local result = {}
+	
+	sign1 = t1.sign
+	mag1 = t1.mag
+	sign2 = t2.sign
+	mag2 = t2.mag
+
+	if not (sign1 and sign2 and mag1 and mag2) then
+		return nil, &quot;Invalid signed huge tables.&quot;
+	end
+
+	result.sign = sign1 * sign2
+	result.mag = JPHuge.mul(mag1, mag2)
+
+	return result
+
+end
+
+function JPHuge.tdiv(t1, t2)
+
+	local sign1, mag1, sign2, mag2
+	local result = {}
+	
+	sign1 = t1.sign
+	mag1 = t1.mag
+	sign2 = t2.sign
+	mag2 = t2.mag
+
+	if not (sign1 and sign2 and mag1 and mag2) then
+		return nil, &quot;Invalid signed huge tables.&quot;
+	end
+
+	result.sign = sign1 * sign2
+	local q, r = JPHuge.div(mag1, mag2)
+	result.mag = q
+	result.rem = r
+
+	return result
+end
+
+-- Note this is not the crypto definition
+function JPHuge.tmod(t1, t2)
+	local sign1, mag1, sign2, mag2
+	local result = {}
+	
+	sign1 = t1.sign
+	mag1 = t1.mag
+	sign2 = t2.sign
+	mag2 = t2.mag
+
+	if not (sign1 and sign2 and mag1 and mag2) then
+		return nil, &quot;Invalid signed huge tables.&quot;
+	end
+
+	result.sign = t1.sign
+	result.mag = JPHuge.mod(mag1, mag2)
+
+	return result
+
+end
+
+function JPHuge.tmoda(t1, t2)
+	local sign1, mag1, sign2, mag2
+	local result = {}
+	
+	sign1 = t1.sign
+	mag1 = t1.mag
+	sign2 = t2.sign
+	mag2 = t2.mag
+
+	if not (sign1 and sign2 and mag1 and mag2) then
+		return nil, &quot;Invalid signed huge tables.&quot;
+	end
+
+	result.sign = t1.sign
+	result.mag = JPHuge.mod(mag1, mag2)
+
+	if result.sign &lt; 0 then
+		result.sign = 1
+		--t2.sign = 1 -- ??
+		result = JPHuge.tsub(result, t2)
+		if result.sign &lt; 0 then
+			result.sign = 1
+		end
+	end
+
+	--result.sign = sign2
+
+	return result
+
+end
+
+function JPHuge.tinv(tz, ta)
+
+	local ti, tj, ty2, ty1, ty, tquotient, tremainder, ta_temp, tresult
+
+	ty = { sign = 1, mag = string.char(1)}
+
+	ta_temp = { sign = 1, mag = string.char(1)}
+	ty2 = { sign = 1, mag = string.char(0)}
+	ty1 = { sign = 1, mag = string.char(1)}
+
+	ti = {sign = ta.sign, mag = ta.mag}
+	tj = {sign = tz.sign, mag = tz.mag}
+
+	if tj.sign &lt; 0 then
+		tj = JPHuge.tmoda(tj, ta)
+		--tj.sign = 1
+		--tj = JPHuge.tsub(tj, ta)
+	end
+	--JPHuge.tshow(tj)
+	--echo(&quot; Q:  R:  Y:  Y1: Y2:\n&quot;)
+	while not (tj.mag:len() == 1 and tj.mag:sub(1,1) == string.char(0)) do
+		tremainder = {sign = ti.sign, mag = ti.mag}
+		ti = {sign = tj.sign, mag = tj.mag}
+	
+		local tempsign = tremainder.sign
+		tremainder = JPHuge.tdiv(tremainder, tj) -- Funny things happening
+		tquotient = {sign = tremainder.sign, mag = tremainder.mag}
+		--tremainder = {sign = tremainder.sign, mag = tremainder.rem}
+		tremainder = {sign = tempsign, mag = tremainder.rem}
+
+		local q, r, y, y1, y2
+		q = tquotient.sign * tquotient.mag:byte(1)
+		r = tremainder.sign * tremainder.mag:byte(1)
+
+		tquotient = JPHuge.tmul(tquotient, ty1)
+		ty = {sign = ty2.sign, mag = ty2.mag}
+		ty = JPHuge.tsub(ty, tquotient)
+
+		tj = {sign = tremainder.sign, mag = tremainder.mag}
+		ty2 = {sign = ty1.sign, mag = ty1.mag}
+		ty1 = {sign = ty.sign, mag = ty.mag}
+
+		
+		y = ty.sign * ty.mag:byte(1)
+		y1 = ty1.sign * ty1.mag:byte(1)
+		y2 = ty2.sign * ty2.mag:byte(1)
+
+
+		--echo(string.format(&quot;%d %d %d %d %d\n&quot;, q, r, y, y1, y2))
+
+
+		
+	end
+
+	tresult  = {sign = ty2.sign, mag = ty2.mag}
+	ta_temp = {sign = ta.sign, mag = ta.mag}
+
+	tresult = JPHuge.tmod(tresult, ta_temp)
+
+	if tresult.sign &lt; 0 then
+		tresult.sign = 1
+		tresult = JPHuge.tsub(tresult, ta_temp)
+		if tresult.sign &lt; 0 then
+			tresult.sign = 1
+		end
+	end
+
+	return tresult
+
+end
+
+function JPHuge.ecc_invert(x, y, p)
+	local inverse
+	--JPHuge.tshow(x)
+	--JPHuge.tshow(y)
+	--JPHuge.tshow(p)
+	inverse = JPHuge.tinv(y, p)
+	--echo(&quot;Inv: 0x&quot;..JPHuge.tohex(inverse.mag)..&quot;\n&quot;)
+
+	return JPHuge.tmul(x, inverse)
+end
+
+function JPHuge.ecc_point_show(p)
+	local dplay = {}
+
+	dplay.x = {sign = p.x.sign, mag = JPHuge.tohex(p.x.mag)}
+	dplay.y = {sign = p.y.sign, mag = JPHuge.tohex(p.y.mag)}
+	display(dplay)
+
+end
+
+function JPHuge.tshow(t)
+	local dplay = JPHuge.tohex(t.mag)
+	if t.sign &lt; 0 then
+		dplay = &quot;-&quot; .. dplay
+	end
+	
+	echo(&quot;0x&quot;..dplay..&quot;\n&quot;)
+end
+
+function JPHuge.ecc_add_points(p1, p2, p)
+
+	local p3, lambda, temp
+	p3 = {}
+	--echo(&quot;here\n&quot;)
+
+	--echo(JPHuge.tohex(JPHuge.tsub(p2.y, p1.y).mag) .. &quot;\n&quot;)
+	--echo(JPHuge.tohex(JPHuge.tsub(p2.x, p1.x).mag) .. &quot;\n&quot;)
+	--echo(JPHuge.tohex(p.mag) .. &quot;\n&quot;)
+
+	--echo(&quot;EE:&quot;..(JPHuge.ext_euclid(4, 23))..&quot;\n&quot;)
+	--echo(&quot;EE:&quot;..(JPHuge.ext_euclid(3, 8))..&quot;\n&quot;)
+
+	lambda = JPHuge.ecc_invert(JPHuge.tsub(p2.y, p1.y), JPHuge.tsub(p2.x, p1.x), p)
+
+	--lambda = {sign = 1, mag = string.char(78)}
+
+	--echo(&quot;L:   0x&quot;..JPHuge.tohex(lambda.mag) ..&quot;\n&quot;)
+	--echo(&quot;P1x: 0x&quot;..JPHuge.tohex(p1.x.mag) .. &quot;\n&quot;)
+	--echo(&quot;P2x: 0x&quot;..JPHuge.tohex(p2.x.mag) .. &quot;\n&quot;)
+	--echo(&quot;P1y: 0x&quot;..JPHuge.tohex(p1.y.mag) .. &quot;\n&quot;)
+	--echo(&quot;p:   0x&quot;..JPHuge.tohex(p.mag)..&quot;\n&quot;)
+
+	-- do these mods need to be the crypto version?
+	p3.x = JPHuge.tmoda(JPHuge.tsub(JPHuge.tsub(JPHuge.tmul(lambda, lambda), p1.x), p2.x), p)
+
+	--[[
+	JPHuge.tshow(p3.x)
+	temp = JPHuge.tsub(p1.x, p3.x)
+	JPHuge.tshow(temp)
+	temp = JPHuge.tmul(lambda, temp)
+	JPHuge.tshow(temp)
+	temp = JPHuge.tsub(temp, p1.y)
+	JPHuge.tshow(temp)
+	temp = JPHuge.tmoda(temp, p)
+	JPHuge.tshow(temp)
+	]]--
+	
+	p3.y = JPHuge.tmoda(JPHuge.tsub(JPHuge.tmul(lambda, JPHuge.tsub(p1.x, p3.x)), p1.y), p)
+
+	--JPHuge.ecc_point_show(p3)
+
+	return p3
+end
+
+function JPHuge.ecc_double_point(p1, p, a)
+	local p3 = {}
+	local three = {sign = 1, mag = string.char(3)}
+	local two = {sign = 1, mag = string.char(2)}
+	local lambda
+	
+	--echo(&quot;There\n&quot;)
+
+	lambda = JPHuge.ecc_invert(JPHuge.tadd(JPHuge.tmul(three, JPHuge.tmul(p1.x,p1.x)), a),
+				JPHuge.tmul(two, p1.y), p)
+
+	--again with the crypto version?
+	p3.x = JPHuge.tmoda(JPHuge.tsub(JPHuge.tmul(lambda, lambda), JPHuge.tmul(two,p1.x)), p)
+	p3.y = JPHuge.tmoda(JPHuge.tsub(JPHuge.tmul(lambda, JPHuge.tsub(p1.x, p3.x)), p1.y), p)
+
+	return p3
+end
+
+function JPHuge.ecc_multiply_point(p1, k, a, p)
+	local dp = {}
+	local mask = 1
+	local paf = 1
+	local e = k.mag
+	local p3 = {}
+
+	dp.x = {sign = p1.x.sign, mag = p1.x.mag}
+	dp.y = {sign = p1.y.sign, mag = p1.y.mag}
+
+	local i = e:len()
+
+	repeat
+		mask = 1
+		while mask &lt; 256 do
+			echo(&quot;Mask: &quot;..mask..&quot;\n&quot;)
+			if JPHuge.band(e:sub(i,i), string.char(mask)) ~= string.char(0) then
+				echo(&quot;yes.\n&quot;)
+				JPHuge.print(dp.x.mag)
+				JPHuge.print(dp.y.mag)
+
+				if paf == 1 then
+					paf = 0
+					p3.x = {sign = dp.x.sign, mag = dp.x.mag}
+					p3.y = {sign = dp.y.sign, mag = dp.y.mag}
+				else
+					p3 = JPHuge.ecc_add_points(p3, dp, p)
+				end
+
+				echo(&quot;p3x:&quot;)
+				JPHuge.print(p3.x.mag)
+				echo(&quot;p3y:&quot;)
+				JPHuge.print(p3.y.mag)
+			end
+
+			dp = JPHuge.ecc_double_point(dp, p, a)			
+
+			--JPHuge.hexprint(dp.x.mag)
+			mask = mask * 2
+		end
+		i = i - 1
+	until i == 0
+
+	if paf == 1 then
+		return p1
+	else
+		return p3
+	end
+end
+
+function JPHuge.ttest()
+	local t1, t2 =  {}, {}
+
+	t1.sign = -1
+	t1.mag = string.char(17)
+
+	t2.sign = 1
+	t2.mag = string.char(7)
+
+	local res = JPHuge.tmoda(t1, t2)
+
+	echo(&quot;Sign: &quot;..res.sign..&quot;\n&quot;)
+	JPHuge.print(res.mag)
+
+end
+
+local ecc_p = &quot;E95E4A5F737059DC60DFC7AD95B3D8139515620F&quot;
+local ecc_a = &quot;340E7BE2A280EB74E2BE61BADA745D97E8F7C300&quot;
+local ecc_b = &quot;1E589A8595423412134FAA2DBDEC95C8D8675E58&quot;
+local ecc_Gx = &quot;BED5AF16EA3F6A4F62938C4631EB5AF7BDBCDBC3&quot;
+local ecc_Gy = &quot;1667CB477A1A8EC338F94741669C976316DA6321&quot;
+
+--local ecc_p = &quot;FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF&quot;
+
+function JPHuge.ttest2()
+	local T = {}
+	local A = {}
+	local B = {}
+	local dplay = {}
+	local Z1,Z2 = {},{}
+
+	T.p = {sign = 1, mag = string.char(23)}
+	T.a = {sign = 1, mag = string.char(1)}
+	T.b = {sign = 1, mag = string.char(1)}
+	T.G = {}
+	T.G.x = {sign = 1, mag = string.char(5)}
+	T.G.y = {sign = 1, mag = string.char(19)}
+	--[[
+	T.p = {sign = 1, mag = JPHuge.hex_to_huge(ecc_p)}
+	T.a = {sign = 1, mag = JPHuge.hex_to_huge(ecc_a)}
+	T.b = {sign = 1, mag = JPHuge.hex_to_huge(ecc_b)}
+	T.G = {}
+	T.G.x = {sign = 1, mag = JPHuge.hex_to_huge(ecc_Gx)}
+	T.G.y = {sign = 1, mag = JPHuge.hex_to_huge(ecc_Gy)}
+	]]--
+	A.private_key = {sign = 1, mag = string.char(7)}
+	B.private_key = {sign = 1, mag = string.char(4)}
+	--A.private_key = {sign = 1, mag = JPHuge.hex_to_huge(&quot;6739AB58BB99EF&quot;)}
+	--B.private_key = {sign = 1, mag = JPHuge.hex_to_huge(&quot;CDE360F134BA12&quot;)}
+	--A.private_key = {sign = 1, mag = JPHuge.hex_to_huge(&quot;11&quot;)}
+	--B.private_key = {sign = 1, mag = JPHuge.hex_to_huge(&quot;12&quot;)}
+
+	dplay = {}
+	dplay.private_key = {sign = A.private_key.sign, mag = JPHuge.tohex(A.private_key.mag)}
+	display(dplay)
+
+	A.public_key = JPHuge.ecc_multiply_point(T.G, A.private_key, T.a, T.p )
+
+	dplay.public_key = {}
+	dplay.public_key.x = {sign = A.public_key.x.sign, mag = JPHuge.tohex(A.public_key.x.mag)}
+	dplay.public_key.y = {sign = A.public_key.y.sign, mag = JPHuge.tohex(A.public_key.y.mag)}
+	dplay.private_key = {sign = A.private_key.sign, mag = JPHuge.tohex(A.private_key.mag)}
+	display(dplay)
+	
+--[[
+
+	B.public_key = JPHuge.ecc_multiply_point(T.G, B.private_key, T.a, T.p )
+	dplay.public_key = {}
+	dplay.public_key.x = {sign = B.public_key.x.sign, mag = JPHuge.tohex(B.public_key.x.mag)}
+	dplay.public_key.y = {sign = B.public_key.y.sign, mag = JPHuge.tohex(B.public_key.y.mag)}
+	dplay.private_key = {sign = B.private_key.sign, mag = JPHuge.tohex(B.private_key.mag)}
+	display(dplay)
+
+	Z1 = JPHuge.ecc_multiply_point(A.public_key, B.private_key, T.a, T.p)
+	dplay = {}
+	dplay.x = {sign = Z1.x.sign, mag = JPHuge.tohex(Z1.x.mag)}
+	dplay.y = {sign = Z1.y.sign, mag = JPHuge.tohex(Z1.y.mag)}
+	display(dplay)
+
+	Z2 = JPHuge.ecc_multiply_point(B.public_key, A.private_key, T.a, T.p)
+	dplay = {}
+	dplay.x = {sign = Z2.x.sign, mag = JPHuge.tohex(Z2.x.mag)}
+	dplay.y = {sign = Z2.y.sign, mag = JPHuge.tohex(Z2.y.mag)}
+	display(dplay)
+]]--
+
+end
+
+function JPHuge.ttest3()
+
+	local p1, p2, p, dplay
+	p1 = {}
+	p2 = {}
+
+	p = {sign = 1, mag = string.char(23)}
+	p1.x = {sign = 1, mag = string.char(17)}
+	p1.y = {sign = 1, mag = string.char(3)}
+	p2.x = {sign = 1, mag = string.char(13)}
+	p2.y = {sign = 1, mag = string.char(16)}
+
+	local result = JPHuge.ecc_add_points(p1, p2, p)
+	dplay = {}
+	
+	dplay.x = {sign = result.x.sign, mag = JPHuge.tohex(result.x.mag)}
+	dplay.y = {sign = result.y.sign, mag = JPHuge.tohex(result.y.mag)}
+	display(dplay)
+
+end
+
+function JPHuge.gcd(x,y)
+
+	--echo(&quot;X: &quot;..tostring(x)..&quot; Y: &quot;..tostring(y)..&quot;\n&quot;)
+
+	if x == 0 then return y end
+	if y == 0 then return x end
+
+	if ( x &gt; y ) then
+		return JPHuge.gcd( x - y, y )
+	else
+		return JPHuge.gcd( y - x, x)
+	end
+end
+
+function JPHuge.ext_euclid( z, a )
+	local i, j, y2, y1, y, quotient, remainder
+
+	i = a
+	j = z
+	y2 = 0
+	y1 = 1
+
+	while j &lt; 0 do
+		j = j + a
+	end
+
+	echo(&quot;J: &quot;..j..&quot;\n&quot;)
+
+	while j &gt; 0 do
+
+		quotient = math.floor(i / j)
+		remainder = i % j
+		y = y2 - (y1 * quotient)
+		i = j
+		j = remainder
+		y2 = y1
+		y1 = y
+		echo(string.format(&quot;%d %d %d %d %d\n&quot;, quotient, remainder, y, y1, y2))
+	end
+
+	return (y2 % a )
+
+end
+
+function JPHuge.invert( x, y, p )
+	echo(&quot;X: &quot; .. x .. &quot; y: &quot; .. y .. &quot; p: &quot; .. p .. &quot;\n&quot;)
+	local inverse = JPHuge.ext_euclid(y, p)
+	echo(&quot;Inv: &quot; .. inverse .. &quot;\n&quot;)
+	return x * inverse
+end
+
+function JPHuge.add_points(p1, p2, p)
+
+	local p3 = {}
+
+	local lambda = JPHuge.invert( p2.y - p1.y, p2.x - p1.x, p )
+
+	echo(&quot;L: &quot;..lambda..&quot;\n&quot;)
+	
+	p3.x = ( ( lambda * lambda ) - p1.x - p2.x ) % p
+	p3.y = ( ( lambda * ( p1.x - p3.x ) ) - p1.y ) % p
+
+	return p3
+
+end
+
+function JPHuge.etest()
+	local p1, p2 = {}, {}
+
+	p1.x = 13
+	p1.y = 7
+	p2.x = 13
+	p2.y = 16
+	p1 = JPHuge.add_points( p1, p2, 23 )
+
+	display(p1)
+
+end
+
+
+
 function JPHuge.dh_agree(p, g, a)
 	return JPHuge.mod_pow(g, a, p)
 end
@@ -2626,6 +3547,17 @@ end
 </script>
                     <eventHandlerList/>
                 </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Custom Database</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+JPCustomDB = JPCustomDB or JPDB:new({name = &quot;custom.jpdb&quot;})</script>
+                    <eventHandlerList/>
+                </Script>
             </ScriptGroup>
             <ScriptGroup isActive="yes" isFolder="yes">
                 <name>players</name>
@@ -2670,6 +3602,44 @@ function jpf.itemInInv(num)
 	return true
 end
 
+function jpf.thingInInv(thing)
+	local a,b
+	thing = string.lower(string)
+	for a,b in paris(JPTables.inInv) do
+		if thing == string.lower(b.name) then
+			JPTables.custom.matchid = a
+			return true 
+		end
+	end
+	return false
+end
+
+function jpf.thingInRoom(thing)
+	local a,b
+	if not thing then
+		local list = JPCustomDB:get(JPTables.custom.id, &quot;list&quot;)
+		if not list then return false end
+		local i, t
+		for i, t in ipairs(list) do
+			for a,b in pairs(JPTables.inRoom.Replicas) do
+				if t == string.lower(b.name) then
+					JPTables.custom.matchid = a
+					return true
+				end
+			end
+		end
+	else
+		thing = string.lower(string)
+		for a,b in paris(JPTables.inRoom.Replicas) do
+			if thing == string.lower(b.name) then 
+				JPTables.custom.matchid = a
+				return true 
+			end
+		end
+		return false
+	end
+end
+
 function jpf.queue(thing)
 	List.pushleft(JP_eqbalqueue, thing)
 	cecho(&quot;&lt;green:black&gt;Queued &quot;..thing..&quot;&lt;reset&gt;\n&quot;)
@@ -2683,6 +3653,10 @@ function jpf.echo(msg)
 	else
 		cecho(&quot;&lt;&quot;..color..&quot;&gt;&quot;..msg..&quot;&lt;reset&gt;&quot;)
 	end
+end
+
+function jpf.substitute(var)
+	return tostring(JPTables.custom[var])
 end</script>
                     <eventHandlerList/>
                 </Script>
