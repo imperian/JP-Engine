@@ -2346,7 +2346,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.15.1&quot;
+JPTables.version = &quot;0.15.3&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
@@ -2360,6 +2360,7 @@ JPTables.msg.done = JPTables.msg.done or {}
 JPTables.attacking = JPTables.attacking or {}
 JPTables.stats = JPTables.stats or {}
 JPTables.custom = JPTables.custom or {}
+JPTables.table = JPTables.table or {}
 </script>
                     <eventHandlerList/>
                 </Script>
@@ -4008,9 +4009,77 @@ function jpf.border(text, size, char)
 		ret = char:sub(1,1) .. text .. char:sub(1,1)
 	end
 	return ret
-
 end
-</script>
+
+function jpf.wordWrap(text, size, wrapOn)
+	if text == nil then return nil end
+	size = size or 90
+	wrapOn = wrapOn or &quot; &quot;
+	local ret = {}
+
+	--echo(&quot;Size: &quot;..tostring(size)..&quot; wrapOn: &gt;&quot;..wrapOn..&quot;&lt;\n&quot;)
+
+	if text:len() &lt;= size then return {text} end
+
+	--local i, j = text:find(wrapOn)
+	
+
+	while text:len() &gt; size do
+		--echo(&quot;hi.\n&quot;)
+		local i, j = text:find(wrapOn)
+		if not i or i &gt; size then
+			table.insert(ret, text:sub(1,size))
+			text = text:sub(size+1,-1)
+		else
+			local lasti
+			while i and i &lt;= size do
+				lasti = i
+				i, j = text:find(wrapOn, i+1)
+			end
+			table.insert(ret, text:sub(1,lasti))
+			text = text:sub(lasti+1, -1)
+		end
+	end
+	if text:len() &gt; 0 then
+		table.insert(ret, text)
+	end
+	return ret
+			
+end
+
+function jpf.twoColumnRow(leftText, rightText)
+	local leftSize = JPTables.table.leftSize or 30
+	local rightSize = JPTables.table.rightSize or 55
+	local size = JPTables.table.size or 90
+	local border = JPTables.table.border or &quot;|&quot;
+	local separator = JPTables.table.separator or &quot;-&quot;
+
+	local ret, leftWrap, rightWrap, rows
+
+	leftWrap = jpf.wordWrap(leftText, leftSize)
+	rightWrap = jpf.wordWrap(rightText, rightSize)
+
+	if #leftWrap &gt; #rightWrap then rows = #leftWrap else rows = #rightWrap end
+
+	local i, v
+	ret = &quot;&quot;
+
+	for i = 1, rows do
+		local ltext, rtext
+
+		if i &lt;= #leftWrap then ltext = leftWrap[i] else ltext = &quot;&quot; end
+		if i &lt;= #rightWrap then rtext = rightWrap[i] else rtext = &quot;&quot; end
+
+		local row = &quot; &quot; .. jpf.left(ltext, leftSize) .. separator .. &quot; &quot; .. jpf.left(rtext, rightSize)
+		separator = &quot; &quot;
+
+		ret = ret .. jpf.border(row, size, border) .. &quot;\n&quot;
+
+	end
+
+	return ret
+
+end</script>
                     <eventHandlerList/>
                 </Script>
             </ScriptGroup>
