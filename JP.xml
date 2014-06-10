@@ -1015,7 +1015,8 @@ jpf.echo(&quot;Custom &quot;..string.lower(matches[2])..&quot;set to &quot;..tog
 end
 
 JPCustomDB:set(string.lower(matches[2]), &quot;action&quot;, matches[3])
-jpf.echo(&quot;Action set.\n&quot;)</script>
+jpf.echo(&quot;Action set to only '&quot;..matches[3]..&quot;'.\n&quot;)
+jpf.echo(&quot;All previous actions have been cleared.\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp custom set act (\w+) (.+)$</regex>
@@ -1094,6 +1095,96 @@ jpf.echo(&quot;Removed from list.\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp custom list del (\w+) (\d+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Show action</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+local list = JPCustomDB:get(string.lower(matches[2]), &quot;action&quot;)
+
+if type(list) == &quot;string&quot; then list = {list} end
+
+local i, item
+
+jpf.echo(&quot;Items in action:\n&quot;)
+for i, item in ipairs(list) do
+	jpf.echo(&quot;[&quot;..jpf.right(tostring(i),3,&quot; &quot;)..&quot;] &quot;..item..&quot;\n&quot;)
+end
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom show act (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Add action</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+local list = JPCustomDB:get(string.lower(matches[2]), &quot;action&quot;)
+
+if type(list) == &quot;string&quot; then list = {list} end
+
+local ind = tonumber(matches[3])
+local custom = string.lower(matches[2])
+
+if ind and ind &lt; list:len() and ind &gt; 0 then
+	table.insert(list, ind, matches[4])
+else
+	table.insert(list, matches[4])
+end
+
+JPCustomDB:set(custom, &quot;action&quot;, list)
+
+local i, item
+
+jpf.echo(&quot;Items in action:\n&quot;)
+for i, item in ipairs(list) do
+	jpf.echo(&quot;[&quot;..jpf.right(tostring(i), 3, &quot; &quot;)..&quot;] &quot;..item..&quot;\n&quot;)
+end
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom add act (\w+)(?: (\d+))? ([\D].*)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Del Action</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+local list = JPCustomDB:get(string.lower(matches[2]), &quot;action&quot;)
+
+if type(list) == &quot;string&quot; or #list == 1 then 
+	JPCustomDB:del(string.lower(matches[2]), &quot;action&quot;)
+	jpf.echo(&quot;Deleted action completely.\n&quot;)
+	return
+end
+
+local ind = tonumber(matches[3])
+local custom = string.lower(matches[2])
+
+if ind and ind &gt; 0 and ind &lt; #list then
+	table.remove(list, ind)
+else
+	table.remove(list, #list)
+end
+
+
+JPCustomDB:set(custom, &quot;action&quot;, list)
+
+local i, item
+
+jpf.echo(&quot;Items in action:\n&quot;)
+for i, item in ipairs(list) do
+	jpf.echo(&quot;[&quot;..jpf.right(tostring(i), 3, &quot; &quot;)..&quot;] &quot;..item..&quot;\n&quot;)
+end
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom del act (\w+)(?: (\d+))?$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -2085,10 +2176,18 @@ function JP_script_now()
 		if JPCustomDB:get(db, &quot;active&quot;) == &quot;yes&quot; and JPCustomDB:get(db,&quot;condition&quot;) and JPCustomDB:get(db,&quot;action&quot;) then
 			--jpf.echo(&quot;IN!\n&quot;)
 			local luaCommand, result
-			luaCommand = &quot;return (&quot; .. JPCustomDB:get(db, &quot;condition&quot;) .. &quot;)&quot;
-			--jpf.echo(&quot;CMD: &quot;..luaCommand..&quot;\n&quot;)
 			JPTables.custom = {}
 			JPTables.custom.id = db
+			local k, v
+			for k, v in pairs(JPTables.Vitals) do
+				Tables.custom[k] = v
+			end
+			JPTables.custom.list = &quot;&quot;
+			-- substitute the variables
+			luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.substitute)
+			luaCommand = luaCommand:gsub(&quot;%$%{([^(]+)%(([^)]*)%)%}&quot;, &quot;jpf.%1(%2)&quot;)
+			luaCommand = &quot;return (&quot; .. JPCustomDB:get(db, &quot;condition&quot;) .. &quot;)&quot;
+			--jpf.echo(&quot;CMD: &quot;..luaCommand..&quot;\n&quot;)
 			local f,e = loadstring(luaCommand)
 			if not f then 
 				echo(&quot;Error: &quot;..e..&quot;\n&quot;)
@@ -2098,25 +2197,33 @@ function JP_script_now()
 			end
 			--jpf.echo(&quot;Continuing (result: &quot;..tostring(result)..&quot;).\n&quot;)
 			if result == true then
-				luaCommand = JPCustomDB:get(db, &quot;action&quot;)
-				-- substitute the variables
-				luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.substitute)
-				if luaCommand:sub(1,2) == &quot;//&quot; then
-					local cmd = luaCommand:sub(3,-1)
-					--echo(&quot;DO: &quot;..cmd..&quot;\n&quot;)
-					local f,e = loadstring(cmd)
-					if not f then 
-						echo(&quot;Error: &quot;..e..&quot;\n&quot;)
-						return false
+				local actions = JPCustomDB:get(db, &quot;action&quot;)
+				if type(actions) == &quot;string&quot; then
+					actions = {actions}
+				end
+				local act
+				for act = 1, #actions do
+					luaCommand = actions[act]
+					-- substitute the variables
+					luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.substitute)
+					luaCommand = luaCommand:gsub(&quot;%$%{([^(]+)%(([^)]*)%)%}&quot;, &quot;jpf.%1(%2)&quot;)
+					if luaCommand:sub(1,2) == &quot;//&quot; then
+						local cmd = luaCommand:sub(3,-1)
+						--echo(&quot;DO: &quot;..cmd..&quot;\n&quot;)
+						local f,e = loadstring(cmd)
+						if not f then 
+							echo(&quot;Error: &quot;..e..&quot;\n&quot;)
+							return false
+						else
+							f()
+							return true
+						end
 					else
-						f()
+						List.pushleft(JP_eqbalqueue, luaCommand)
+						cecho(&quot;&lt;green:black&gt;Queued &quot;..luaCommand..&quot;&lt;reset&gt;\n&quot;)
 						return true
+					--expandAlias(acts[act])
 					end
-				else
-					List.pushleft(JP_eqbalqueue, luaCommand)
-					cecho(&quot;&lt;green:black&gt;Queued &quot;..luaCommand..&quot;&lt;reset&gt;\n&quot;)
-					return true
-				--expandAlias(acts[act])
 				end
 			end
 		end
