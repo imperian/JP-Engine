@@ -1195,7 +1195,7 @@ end
                 <regex></regex>
                 <Alias isActive="yes" isFolder="no">
                     <name>Main help</name>
-                    <script>jpf.echo(jpf.center(&quot;JP Engine Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+                    <script>jpf.echo(jpf.center(&quot;JP Engine Commands (v.&quot; .. tostring(JPTables.version)..&quot;)&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(jpf.center(&quot;Main Commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(jpf.center(&quot;-----------------&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
@@ -2346,6 +2346,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
+JPTables.version = &quot;0.15.1&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
