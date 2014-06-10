@@ -1046,7 +1046,7 @@ local i, item
 
 jpf.echo(&quot;Items in list:\n&quot;)
 for i, item in ipairs(list) do
-	jpf.echo(&quot;[&quot;..tostring(i)..&quot;] &quot;..item..&quot;\n&quot;)
+	jpf.echo(&quot;[&quot;..jpf.right(tostring(i),3,&quot; &quot;)..&quot;] &quot;..item..&quot;\n&quot;)
 end
 </script>
                     <command></command>
@@ -2179,14 +2179,22 @@ function JP_script_now()
 			JPTables.custom = {}
 			JPTables.custom.id = db
 			local k, v
+			--jpf.echo(&quot;Here.\n&quot;)
+			--display(JPTables.Vitals)
 			for k, v in pairs(JPTables.Vitals) do
-				Tables.custom[k] = v
+				--jpf.echo(&quot;K: &quot; .. k .. &quot; v: &quot; .. v.. &quot;\n&quot;)
+				JPTables.custom[k] = v
 			end
 			JPTables.custom.list = &quot;&quot;
 			-- substitute the variables
-			luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.substitute)
+
+			luaCommand = JPCustomDB:get(db, &quot;condition&quot;)
+			--jpf.echo(&quot;CMD: &quot; .. tostring(luaCommand) .. &quot;\n&quot;)
+		
+			luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.quoteSubstitute)
+			luaCommand = luaCommand:gsub( &quot;#%(([^)]+)%)&quot;,jpf.substitute)
 			luaCommand = luaCommand:gsub(&quot;%$%{([^(]+)%(([^)]*)%)%}&quot;, &quot;jpf.%1(%2)&quot;)
-			luaCommand = &quot;return (&quot; .. JPCustomDB:get(db, &quot;condition&quot;) .. &quot;)&quot;
+			luaCommand = &quot;return (&quot; .. luaCommand .. &quot;)&quot;
 			--jpf.echo(&quot;CMD: &quot;..luaCommand..&quot;\n&quot;)
 			local f,e = loadstring(luaCommand)
 			if not f then 
@@ -2205,9 +2213,10 @@ function JP_script_now()
 				for act = 1, #actions do
 					luaCommand = actions[act]
 					-- substitute the variables
-					luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.substitute)
-					luaCommand = luaCommand:gsub(&quot;%$%{([^(]+)%(([^)]*)%)%}&quot;, &quot;jpf.%1(%2)&quot;)
+					luaCommand = luaCommand:gsub(&quot;%$%(([^)]+)%)&quot;,jpf.quoteSubstitute)
+					luaCommand = luaCommand:gsub( &quot;#%(([^)]+)%)&quot;,jpf.substitute)
 					if luaCommand:sub(1,2) == &quot;//&quot; then
+						luaCommand = luaCommand:gsub(&quot;%$%{([^(]+)%(([^)]*)%)%}&quot;, &quot;jpf.%1(%2)&quot;)
 						local cmd = luaCommand:sub(3,-1)
 						--echo(&quot;DO: &quot;..cmd..&quot;\n&quot;)
 						local f,e = loadstring(cmd)
@@ -2216,15 +2225,16 @@ function JP_script_now()
 							return false
 						else
 							f()
-							return true
+							--return true
 						end
 					else
 						List.pushleft(JP_eqbalqueue, luaCommand)
 						cecho(&quot;&lt;green:black&gt;Queued &quot;..luaCommand..&quot;&lt;reset&gt;\n&quot;)
-						return true
+						--return true
 					--expandAlias(acts[act])
 					end
 				end
+				return true
 			end
 		end
 
@@ -3907,6 +3917,10 @@ end
 
 function jpf.substitute(var)
 	return tostring(JPTables.custom[var])
+end
+
+function jpf.quoteSubstitute(var)
+	return '&quot;' .. tostring(JPTables.custom[var]) ..'&quot;'
 end
 
 function jpf.center(text, size, char)
