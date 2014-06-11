@@ -322,6 +322,77 @@ deselect()
                     </regexCodePropertyList>
                 </Trigger>
             </TriggerGroup>
+            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>Custom</name>
+                <script></script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList/>
+                <regexCodePropertyList/>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Load Area From Msg</name>
+                    <script>local min, max = tonumber(matches[2]), tonumber(matches[3])
+local rnd = tonumber(matches[4])
+
+jpf.echo(&quot;\nPart &quot;..min..&quot; of &quot;..max..&quot; in seed &quot;..rnd..&quot;.\n&quot;)
+
+if JPTables.cmsg.seed ~= rnd then
+	jpf.echo(&quot;Starting to assemble new custom.\n&quot;)
+	JPTables.cmsg.data = {}
+	JPTables.cmsg.seed = rnd
+	JPTables.cmsg.done = {}
+	JPTables.cmsg.size = max
+end
+
+if JPTables.cmsg.done[min] == true then
+	jpf.echo(&quot;Reprocessing chunk &quot;..min..&quot;\n&quot;)
+else
+	jpf.echo(&quot;Processing new chunk &quot;..min..&quot;\n&quot;)
+	JPTables.cmsg.done[min] = true
+end
+JPTables.cmsg.data[min] = matches[5]
+
+local i, j
+
+jpf.echo(&quot;Checking what chunks are still missing...&quot;)
+j = 0
+for i = 1, max do
+	if not JPTables.cmsg.done[i] then
+		if j == 0 then echo(&quot;\nMissing: &quot;) end
+		jpf.echo(tostring(i)..&quot;...&quot;)
+		j = j + 1
+	end
+end
+jpf.echo(&quot;done!\n&quot;)
+if j == 0 then
+	jpf.echo(&quot;No sections missing, do JP CUSTOM LOAD to complete.\n&quot;)
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^&quot;!&amp;(\d{4})&amp;(\d{4})&amp;(\d{9})\$([a-zA-Z0-9/=+]+)\$&amp;&amp;&amp;!&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+            </TriggerGroup>
         </TriggerGroup>
     </TriggerPackage>
     <TimerPackage>
@@ -1051,7 +1122,7 @@ end
 </script>
                     <command></command>
                     <packageName></packageName>
-                    <regex>^jp custom list show (\w+)$</regex>
+                    <regex>^jp custom show list (\w+)$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Add to list</name>
@@ -1074,7 +1145,7 @@ jpf.echo(&quot;Added '&quot;..item..&quot;' to list.\n&quot;)
 </script>
                     <command></command>
                     <packageName></packageName>
-                    <regex>^jp custom list add (\w+) (.+)$</regex>
+                    <regex>^jp custom add list (\w+) (.+)$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Del from list</name>
@@ -1087,14 +1158,27 @@ local custom = string.lower(matches[2])
 local item = tonumber(matches[3])
 local list = JPCustomDB:get(custom, &quot;list&quot;)
 
-table.remove(list, item)
+if not list then 
+	jpf.echo(&quot;That list is already empty.\n&quot;)
+	return
+end
+
+if not item or item &lt; 0 or item &gt;= #list then
+	table.remove(list, #list)
+else
+	table.remove(list, item)
+end
 
 JPCustomDB:set(custom, &quot;list&quot;, list)
 
-jpf.echo(&quot;Removed from list.\n&quot;)</script>
+local i
+jpf.echo(&quot;Items in list:\n&quot;)
+for i, item in ipairs(list) do
+	jpf.echo(&quot;[&quot;..jpf.right(tostring(i),3,&quot; &quot;)..&quot;] &quot;..item..&quot;\n&quot;)
+end</script>
                     <command></command>
                     <packageName></packageName>
-                    <regex>^jp custom list del (\w+) (\d+)$</regex>
+                    <regex>^jp custom del list (\w+)(?: (\d+))?$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Show action</name>
@@ -1186,6 +1270,91 @@ end
                     <packageName></packageName>
                     <regex>^jp custom del act (\w+)(?: (\d+))?$</regex>
                 </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Msg custom</name>
+                    <script>if not JPCustomDB:exists(string.lower(matches[2])) then
+	jpf.echo(&quot;That custom does not exist.\n&quot;)
+	return
+end
+
+local msgTable = {}
+local db = string.lower(matches[2])
+
+msgTable[db] = JPCustomDB:get(db)
+
+local msg = yajl.to_string(msgTable)
+
+msg = JP_enc(msg)
+
+local length = msg:len()
+local i, j, k
+j = 1
+k = {}
+for i = 1, length, 2000 do
+	echo(&quot;chunk &quot;..i..&quot;.\n&quot;)
+	k[j] = msg:sub(i,i+1999)
+	j = j + 1
+end
+
+math.randomseed( os.time() )
+math.random(); math.random(); math.random()
+
+local rnd = math.random(999999999)
+
+j = j - 1
+for i = 1, j do
+	tempTimer((i-1)*6+1,[[send(&quot;msg ]]..matches[3]..&quot; &quot;..string.format(&quot;!&amp;%0.4i&amp;%0.4i&amp;%0.9i$%s$&amp;&amp;&amp;!&quot;,i,j,rnd,k[i])..[[&quot;)]])
+end
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom msg (\w+) (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>custom load</name>
+                    <script>local i
+if not JPTables.cmsg.size then jpf.echo(&quot;No download pending.\n&quot;);return end
+for i = 1, JPTables.cmsg.size do
+	if JPTables.cmsg.done[i] ~= true then
+		jpf.echo(&quot;Download not complete, missing at least piece &quot;..i..&quot;!\n&quot;)
+		return
+	end
+end
+
+local assemble
+
+if JPTables.cmessages.data == nil then
+	local s = &quot;&quot;
+	for i = 1, JPTables.cmsg.size do
+		s = s .. JPTables.cmsg.data[i]
+	end
+	JPTables.cmessages.pickled = JP_dec(s)
+	JPTables.cmessages.data = yajl.to_value(JPTables.cmessages.pickled)
+
+	display(JPTables.cmessages.data)
+	
+end
+
+if matches[2] ~= &quot;confirm&quot; then
+	jpf.echo(&quot;Use JP CUSTOM LOAD CONFIRM to finalize&quot;)
+else
+
+	local i, j
+	for i, j in pairs(JPTables.cmessages.data) do
+		JPCustomDB:set(i, j)
+	end
+
+	JPTables.cmessages = {}
+	JPTables.cmsg.data = {}
+	JPTables.cmsg.seed = nil
+	JPTables.cmsg.done = {}
+	JPTables.cmsg.size = nil
+	echo(&quot;Custom data loaded.\n&quot;)
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp custom load(?: (confirm))?$</regex>
+                </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
                 <name>Help Files</name>
@@ -1269,9 +1438,8 @@ jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash aggro (on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- On means the mob is aggro.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash team (on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- On means the mob teams.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash priority &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the mobs bashing priority. Higher numbers get hit&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash max &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max number of the mob in room before skipping.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash max &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max number of the mob in room before skipping.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  first. Team += 50 aggro += 100.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash max &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max number of the mob in room before skipping.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 
 jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area bmax &lt;#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max total # of mobs in a room.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
@@ -1296,11 +1464,28 @@ jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Custom Help</name>
-                    <script>jpf.echo(jpf.center(&quot;JP Custom Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+                    <script>JPTables.table.leftSize = 30
+JPTables.table.rightSize = 55
+JPTables.table.size = 90
+JPTables.table.border = &quot;|&quot;
+JPTables.table.separator = &quot;-&quot;
+
+jpf.echo(jpf.center(&quot;JP Custom Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp custom create &lt;name&gt;&quot;, 30, &quot; &quot;) .. &quot;- Creates a new custom.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp custom &lt;name&gt; (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns the custom on or off&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.twoColumnRow(&quot;jp custom create &lt;name&gt;&quot;, &quot;Creates a new custom.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom &lt;name&gt; (on|off)&quot;, &quot;Turns the custom on or off&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom set cond &lt;name&gt; &lt;cond&gt;&quot;,&quot;Set the activation condition for the custom.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom set act &lt;name&gt; &lt;act&gt;&quot;,&quot;Clears previous actions and sets the action to &lt;act&gt;.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom add act &lt;name&gt; [#] &lt;act&gt;&quot;,&quot;Adds an action to the list of actions. [#] optional, defaults to end.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom del act &lt;name&gt; [#]&quot;,&quot;Deletes an action. [#] optional, defaults to last.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom show act &lt;name&gt;&quot;,&quot;Shows the action list for &lt;name&gt;.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom show list &lt;name&gt;&quot;,&quot;Shows the list of items for &lt;name&gt;.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom add list &lt;name&gt; &lt;item&gt;&quot;,&quot;Adds &lt;item&gt; to the list for &lt;name&gt;.&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom del list &lt;name&gt; [#]&quot;,&quot;Removes [#] from list. [#] optional, defaults to last item.&quot;))
+
+
+
 jpf.echo(jpf.border(jpf.center(&quot;Still in testing, additional information forthcoming.&quot;, 88), 90, &quot;|&quot;) .. &quot;\n&quot;)
 
 
@@ -2295,7 +2480,12 @@ end
 function JPDB:set(name, stat, value)
 	name = string.lower(name)
 	self:add(name)
-	self.data[name][stat] = value
+	if value then
+		self.data[name][stat] = value
+	else
+		self.data[name] = stat
+	end
+		
 end
 
 function JPDB:get(name, stat)
@@ -2346,7 +2536,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.15.3&quot;
+JPTables.version = &quot;0.15.5&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
@@ -2354,9 +2544,13 @@ JPTables.inInv = JPTables.inInv or {}
 JPTables.walkList = JPTables.walkList or {}
 JPTables.movement = JPTables.movement or {}
 JPTables.messages = JPTables.messages or {}
+JPTables.cmessages = JPTables.cmessages or {}
 JPTables.msg = JPTables.msg or {}
 JPTables.msg.data = JPTables.msg.data or {}
 JPTables.msg.done = JPTables.msg.done or {}
+JPTables.cmsg = JPTables.cmsg or {}
+JPTables.cmsg.data = JPTables.cmsg.data or {}
+JPTables.cmsg.done = JPTables.cmsg.done or {}
 JPTables.attacking = JPTables.attacking or {}
 JPTables.stats = JPTables.stats or {}
 JPTables.custom = JPTables.custom or {}
