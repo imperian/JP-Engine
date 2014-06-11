@@ -1207,7 +1207,7 @@ end
 	jpf.echo(&quot;That custom does not exist.\n&quot;)
 	return
 end
-local list = JPCustomDB:get(string.lower(matches[2]), &quot;action&quot;)
+local list = JPCustomDB:get(string.lower(matches[2]), &quot;action&quot;) or {}
 
 if type(list) == &quot;string&quot; then list = {list} end
 
