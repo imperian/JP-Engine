@@ -778,6 +778,32 @@ echo(&quot;Mob &quot;..mob..&quot; &quot;..matches[2]..&quot; set to &quot;..tog
                     <packageName></packageName>
                     <regex>^jp bash (priority|aggro|team|max) (on|off|\d+) (.+)$</regex>
                 </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Areas List</name>
+                    <script>JPTables.table.leftSize = 10
+JPTables.table.rightSize = 75
+JPTables.table.size = 90
+JPTables.table.border = &quot;|&quot;
+JPTables.table.separator = &quot;-&quot;
+
+jpf.echo(jpf.center(&quot;Configured Areas&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+
+jpf.echo(jpf.twoColumnRow(jpf.center(&quot;Number&quot;,10), jpf.center(&quot;Description&quot;, 75)))
+
+local id, data
+
+for id, data in pairs(JPAreaDB.data) do	
+	jpf.echo(jpf.twoColumnRow(jpf.right(id, 9), getRoomAreaName(tonumber(id))))
+end
+
+
+jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp area list$</regex>
+                </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
                 <name>Questing</name>
@@ -1445,6 +1471,7 @@ jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area bmax &lt;#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max total # of mobs in a room.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area (walk|no_walk) [room]&quot;, 30, &quot; &quot;) .. &quot;- Same as general command but for the current area.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area show&quot;, 30, &quot; &quot;) .. &quot;- Show current area data.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area list&quot;, 30, &quot; &quot;) .. &quot;- Lists all area names with data.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 
 jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp questadd &lt;mob#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Adds an action to execute when seeing mob #.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
@@ -1475,6 +1502,7 @@ jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 
 jpf.echo(jpf.twoColumnRow(&quot;jp custom create &lt;name&gt;&quot;, &quot;Creates a new custom.&quot;))
 jpf.echo(jpf.twoColumnRow(&quot;jp custom &lt;name&gt; (on|off)&quot;, &quot;Turns the custom on or off&quot;))
+jpf.echo(jpf.twoColumnRow(&quot;jp custom show &lt;name&gt;&quot;, &quot;Shows details about the custom&quot;))
 jpf.echo(jpf.twoColumnRow(&quot;jp custom set cond &lt;name&gt; &lt;cond&gt;&quot;,&quot;Set the activation condition for the custom.&quot;))
 jpf.echo(jpf.twoColumnRow(&quot;jp custom set act &lt;name&gt; &lt;act&gt;&quot;,&quot;Clears previous actions and sets the action to &lt;act&gt;.&quot;))
 jpf.echo(jpf.twoColumnRow(&quot;jp custom add act &lt;name&gt; [#] &lt;act&gt;&quot;,&quot;Adds an action to the list of actions. [#] optional, defaults to end.&quot;))
@@ -2536,7 +2564,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.15.5&quot;
+JPTables.version = &quot;0.15.7&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
@@ -2696,6 +2724,7 @@ function JPAreaDB:unserializeAndLoadArea(data)
 	local k, v
 
 	for k, v in pairs(area) do
+		jpf.echo(&quot;Data FOUND for area '&quot; .. getRoomAreaName(tonumber(k)) .. &quot;'.\n&quot; )
 		self.data[k] = v
 	end
 	self:refreshData()
@@ -2717,6 +2746,7 @@ function JPAreaDB:unserializeData(data)
 	local k, v
 	for k, v in pairs(area) do
 		echo(&quot;Found data for area &quot;..k..&quot;.\n&quot;)
+		jpf.echo(&quot;Data FOUND for area '&quot; .. getRoomAreaName(tonumber(k)) .. &quot;'.\n&quot; )
 	end
 end
 
@@ -4057,6 +4087,42 @@ function jpf.itemInInv(num)
 	if not JPTables.inInv[num] then return false end
 	return true
 end
+
+function jpf.invItemHasFlag(num, flag)
+	num = tonumber(num)
+	if not num then return nil end
+	num = tostring(num)
+
+	local item = JPTables.inInv[num]
+	if not item then return nil end
+
+	local attrib = item.attrib
+	if not attrib then return false end
+
+	local i, j = attrib:find(flag)
+
+	if not i then return false end
+
+	return true
+end
+
+function jpf.isWielded(num)
+	if tonumber(num) then
+		return jpf.invItemHasFlag(num, &quot;l&quot;)
+	else
+		local thing = string.lower(num)
+		local a, b
+		for a, b in pairs(JPTables.inInv) do
+			if thing == string.lower(b.name) then
+				if jpf.invItemHasFlag(a, &quot;l&quot;) then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
 
 function jpf.thingInInv(thing)
 	local a,b
