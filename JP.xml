@@ -234,7 +234,7 @@ y = JP_dec(y)
 local ply = string.lower(matches[2])
 JPPlayerDB:set(ply, &quot;dh_y&quot;, y)
 
-selectText(line,1)
+selectString(line,1)
 replace(&quot;You have received an encryption key from &quot;..matches[2]..&quot;. Use JP FINALIZE KEY &quot;..string.upper(ply)..&quot; to finish the key exchange.&quot;)
 fg(&quot;PaleGoldenrod&quot;)
 resetFormat()
@@ -1134,7 +1134,9 @@ jpf.echo(&quot;WARNING: Using weak encryption. Strong encryption takes minutes i
 p = JPHuge.hex_to_huge(&quot;1FFFFFFFFFFFFFFFFFFFFFFFBB&quot;)
 g = string.char(2)
 
-math.randomseed( os.time )
+
+
+math.randomseed( os.time() )
 
 a = string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
 	string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
@@ -1168,7 +1170,7 @@ y = JPPlayerDB:get(ply, &quot;dh_y&quot;)
 
 if not a and y then
 
-	math.randomseed( os.time )
+	math.randomseed( os.time() )
 
 	a = string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
 		string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
@@ -2795,7 +2797,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.15.8&quot;
+JPTables.version = &quot;0.15.9&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
