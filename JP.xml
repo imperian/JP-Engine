@@ -256,7 +256,7 @@ deselect()
                         <string>(\w+) tells you, &quot;(!@\$([a-zA-Z0-9/=+]+)\$@!)&quot;</string>
                     </regexCodeList>
                     <regexCodePropertyList>
-                        <integer>0</integer>
+                        <integer>1</integer>
                     </regexCodePropertyList>
                 </Trigger>
             </TriggerGroup>
