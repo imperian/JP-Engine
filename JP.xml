@@ -1677,6 +1677,8 @@ tbl = tbl .. jpf.twoColumnRow(&quot;jp area list&quot;, &quot;Shows a list of al
 tbl = tbl .. jpf.emptyRow()
 tbl = tbl .. jpf.twoColumnRow(&quot;jp questadd &lt;mob#&gt; &lt;action&gt;&quot;, &quot;Appends a new action to the list for mob. Mob# is the mob's number.&quot;)
 tbl = tbl .. jpf.twoColumnRow(&quot;jp questdel &lt;mob#&gt;&quot;, &quot;Deletes all actions for mob#.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp questp &lt;name&gt; (on|off)&quot;, &quot;Sets whether you will do quest actions with &lt;name&gt; in the room.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp bashp &lt;name&gt; (on|off)&quot;, &quot;Sets whether you will bash with &lt;name&gt; in the room.&quot;)
 tbl = tbl .. jpf.emptyRow()
 tbl = tbl .. jpf.twoColumnRow(&quot;jp area msg &lt;ply&gt;&quot;, &quot;Sends the current area data to ply in a message.&quot;)
 tbl = tbl .. jpf.emptyRow()
@@ -2797,7 +2799,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.15.9&quot;
+JPTables.version = &quot;0.16.0&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
