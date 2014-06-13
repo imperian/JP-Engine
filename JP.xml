@@ -225,6 +225,40 @@ deselect()
                         <integer>1</integer>
                     </regexCodePropertyList>
                 </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Receive Encryption Key</name>
+                    <script>local y = matches[4]
+
+y = JP_dec(y)
+
+local ply = string.lower(matches[2])
+JPPlayerDB:set(ply, &quot;dh_y&quot;, y)
+
+selectText(line,1)
+replace(&quot;You have received an encryption key from &quot;..matches[2]..&quot;. Use JP FINALIZE KEY &quot;..string.upper(ply)..&quot; to finish the key exchange.&quot;)
+fg(&quot;PaleGoldenrod&quot;)
+resetFormat()
+
+deselect()
+
+</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>(\w+) tells you, &quot;(!@\$([a-zA-Z0-9/=+]+)\$@!)&quot;</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>0</integer>
+                    </regexCodePropertyList>
+                </Trigger>
             </TriggerGroup>
             <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
                 <name>Stat Tracking</name>
@@ -490,6 +524,30 @@ echo(&quot;Everything stopped!\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp stop$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>WordWrap</name>
+                    <script>local size = tonumber(matches[2])
+
+if not size or size &lt; 50 or size &gt; 100 then
+	jpf.echo(&quot;You may only specify a wordwrap of 50 to 100.\n&quot;)
+	return
+end
+
+JPSettingsDB:set(&quot;display&quot;, &quot;wordwrap&quot;, size)
+
+jpf.echo(&quot;Wordwrap set to &quot;..tostring(size)..&quot;.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp set wordwrap (\d+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^jp set bash command (\w+)$</name>
+                    <script>JPSettingsDB:set(&quot;bash&quot;, &quot;command&quot;, matches[2])
+jpf.echo(&quot;Bashing will now execute: &quot;..matches[2]..&quot; &lt;thing&gt;.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp set bash command (\w+)$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -780,16 +838,23 @@ echo(&quot;Mob &quot;..mob..&quot; &quot;..matches[2]..&quot; set to &quot;..tog
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Areas List</name>
-                    <script>JPTables.table.leftSize = 10
-JPTables.table.rightSize = 75
-JPTables.table.size = 90
+                    <script>
+local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
+
+JPTables.table.leftSize = 10
+JPTables.table.rightSize = size - 15
+JPTables.table.size = size
 JPTables.table.border = &quot;|&quot;
+JPTables.table.topBorder = &quot;-&quot;
 JPTables.table.separator = &quot;-&quot;
 
-jpf.echo(jpf.center(&quot;Configured Areas&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+--jpf.echo(jpf.center(&quot;Configured Areas&quot;, size, &quot;-&quot;) .. &quot;\n&quot;)
+--jpf.echo(jpf.border(&quot;&quot;, size, &quot;|&quot;) .. &quot;\n&quot;)
 
-jpf.echo(jpf.twoColumnRow(jpf.center(&quot;Number&quot;,10), jpf.center(&quot;Description&quot;, 75)))
+jpf.echo(jpf.tableTop(&quot;Configured Areas&quot;))
+jpf.echo(jpf.emptyRow())
+
+jpf.echo(jpf.twoColumnRow(jpf.center(&quot;Number&quot;,10), jpf.center(&quot;Description&quot;, size -15 )))
 
 local id, data
 
@@ -797,9 +862,11 @@ for id, data in pairs(JPAreaDB.data) do
 	jpf.echo(jpf.twoColumnRow(jpf.right(id, 9), getRoomAreaName(tonumber(id))))
 end
 
+jpf.echo(jpf.emptyRow())
+jpf.echo(jpf.tableTop(&quot;&quot;))
 
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+--jpf.echo(jpf.border(&quot;&quot;, size, &quot;|&quot;) .. &quot;\n&quot;)
+--jpf.echo(jpf.center(&quot;&quot;, size, &quot;-&quot;) .. &quot;\n&quot;)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp area list$</regex>
@@ -1055,6 +1122,85 @@ display(plaintext)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp test enc (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Send Key</name>
+                    <script>local p, g, a, ply, ys, msg
+
+ply = string.lower(matches[2])
+
+jpf.echo(&quot;WARNING: Using weak encryption. Strong encryption takes minutes in pure lua.\n&quot;)
+
+p = JPHuge.hex_to_huge(&quot;1FFFFFFFFFFFFFFFFFFFFFFFBB&quot;)
+g = string.char(2)
+
+math.randomseed( os.time )
+
+a = string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
+	string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
+	string.char(math.random(0,255)) .. string.char(math.random(0,255))
+
+JPPlayerDB:set(ply, &quot;dh_a&quot;, a)
+
+ys = JPHuge.dh_agree(p, g, a)
+
+msg = &quot;tell &quot;..ply..&quot; !@$&quot;..JP_enc(ys)..&quot;$@!&quot;
+
+send(msg)
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp send key (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Finalize Key</name>
+                    <script>local p, g, a, ply, ys, msg, y, z
+
+ply = string.lower(matches[2])
+
+jpf.echo(&quot;WARNING: Using weak encryption. Strong encryption takes minutes in pure lua.\n&quot;)
+
+p = JPHuge.hex_to_huge(&quot;1FFFFFFFFFFFFFFFFFFFFFFFBB&quot;)
+g = string.char(2)
+
+a = JPPlayerDB:get(ply, &quot;dh_a&quot;)
+y = JPPlayerDB:get(ply, &quot;dh_y&quot;)
+
+if not a and y then
+
+	math.randomseed( os.time )
+
+	a = string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
+		string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. string.char(math.random(0,255)) .. 
+		string.char(math.random(0,255)) .. string.char(math.random(0,255))
+
+	ys = JPHuge.dh_agree(p, g, a)
+	msg = &quot;tell &quot;..ply..&quot; !@$&quot;..JP_enc(ys)..&quot;$@!&quot;
+
+	send(msg)
+
+	z = JPHuge.dh_finalize(p, y, a)
+elseif a and y then
+	z = JPHuge.dh_finalize(p, y, a)
+elseif a and not y then
+	jpf.echo(&quot;Have not received keygen material from &quot;..string.title(ply)..&quot;. Aborting.\n&quot;)
+	return
+else
+	jpf.echo(&quot;You must use JP SEND KEY &quot;..string.upper(ply)..&quot; to start the key exchange.\n&quot;)
+	return
+end
+
+
+JPPlayerDB:set(ply, &quot;password&quot;, z)
+JPPlayerDB:del(ply, &quot;dh_y&quot;)
+JPPlayerDB:del(ply, &quot;dh_a&quot;)
+
+jpf.echo(&quot;Password set for &quot;..string.title(ply)..&quot;.\n&quot;)
+jpf.echo(&quot;Use JPET &quot;..string.upper(ply)..&quot; &lt;MSG&gt; or .&quot;..string.upper(ply)..&quot; &lt;MSG&gt; to send encrypted tells.\n&quot;)
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp finalize key (\w+)$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -1390,7 +1536,43 @@ end</script>
                 <regex></regex>
                 <Alias isActive="yes" isFolder="no">
                     <name>Main help</name>
-                    <script>jpf.echo(jpf.center(&quot;JP Engine Commands (v.&quot; .. tostring(JPTables.version)..&quot;)&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
+                    <script>
+local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
+
+JPTables.table.leftSize = 30
+JPTables.table.rightSize = size - 35
+JPTables.table.size = size
+JPTables.table.border = &quot;|&quot;
+JPTables.table.topBorder = &quot;-&quot;
+JPTables.table.separator = &quot;-&quot;
+
+local tbl
+
+tbl = jpf.tableTop(&quot;JP Engine Commands (v.&quot;..JPTables.version..&quot;)&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.headingRow(&quot;Main Commands&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp conf&quot;, &quot;Show system-wide configuration settings.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp stop&quot;, &quot;Stop everything in case of emergency.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set &lt;thing&gt; &lt;value&gt;&quot;, &quot;Sets individual system values. See JP SET for more info.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.headingRow(&quot;Walk Commands&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp determine path&quot;, &quot;Calculates a path around the current area.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp clear path&quot;, &quot;Clears the determined path.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp [area] (walk|no_walk) [room]&quot;, &quot;Sets whether determine path will go into a specified room. &quot; ..
+																			&quot;Room is optional and will default to the current room. &quot; ..
+																			&quot;The word \&quot;area\&quot; is recommended as this will store the data with the current area.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.headingRow(&quot;Other Useful Info Files&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;JP CUSTOM&quot;, &quot;Information about the custom action system.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;JP TALK&quot;, &quot;Information about the encrypted chat system.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.row(&quot;Use JP HELP for an overview description of the system.&quot;,&quot;center&quot;)
+tbl = tbl .. jpf.tableTop(&quot;&quot;)
+
+jpf.echo(tbl)
+
+--[[
+jpf.echo(jpf.center(&quot;JP Engine Commands (v.&quot; .. tostring(JPTables.version)..&quot;)&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(jpf.center(&quot;Main Commands&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.border(jpf.center(&quot;-----------------&quot;, 88, &quot; &quot;), 90, &quot;|&quot;) .. &quot;\n&quot;)
@@ -1425,7 +1607,7 @@ jpf.echo(jpf.border(jpf.center(&quot;Use JP TALK for commands&quot;, 88, &quot; 
 
 jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
 jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
-
+]]--
 </script>
                     <command></command>
                     <packageName></packageName>
@@ -1433,114 +1615,163 @@ jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Set help</name>
-                    <script>jpf.echo(jpf.center(&quot;JP Set Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+                    <script>local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
 
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set bash (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns autobashing on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set quest (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns autoquesting on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set walk (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns autowalking on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set custom (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns custom on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set all (on|off)&quot;, 30, &quot; &quot;) .. &quot;- Turns all the above on/off.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+JPTables.table.leftSize = 30
+JPTables.table.rightSize = size - 35
+JPTables.table.size = size
+JPTables.table.border = &quot;|&quot;
+JPTables.table.topBorder = &quot;-&quot;
+JPTables.table.separator = &quot;-&quot;
 
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set color (color)&quot;, 30, &quot; &quot;) .. &quot;- Sets the default color for messages.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  Color must be a valid Mudlet color name.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp set walk &lt;depth&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the longest walk path for determine path.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  Defaults to 100.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+local tbl
 
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+tbl = jpf.tableTop(&quot;JP Set Commands&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set bash (on|off)&quot;, &quot;Turns autobashing on/off.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set quest (on|off)&quot;, &quot;Turns autoquestion on/off.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set custom (on|off)&quot;, &quot;Turns custom engine on/off.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set walk (on|off)&quot;, &quot;Turns autowalking on/off.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set all (on|off)&quot;, &quot;Turns everything on/off.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set color &lt;color&gt;&quot;, &quot;Sets the default color for JP Engine to use. Must be a valid mudlet color.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set walk &lt;depth&gt;&quot;, &quot;Sets the path recursion max depth. Default is 100.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set wordwrap &lt;size&gt;&quot;, &quot;Sets the number of columns to wrap at. Must be 50-100, default is 90&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.tableTop(&quot;&quot;)
+
+jpf.echo(tbl)
+
+</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp set$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Area Help</name>
-                    <script>jpf.echo(jpf.center(&quot;JP Area Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+                    <script>local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
 
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash(on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Targets the mob for bashing.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  Mob is the mob's short description (info here).&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash aggro (on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- On means the mob is aggro.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash team (on|off) &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- On means the mob teams.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash priority &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the mobs bashing priority. Higher numbers get hit&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  first. Team += 50 aggro += 100.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp bash max &lt;#&gt; &lt;mob&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max number of the mob in room before skipping.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+JPTables.table.leftSize = 30
+JPTables.table.rightSize = size - 35
+JPTables.table.size = size
+JPTables.table.border = &quot;|&quot;
+JPTables.table.topBorder = &quot;-&quot;
+JPTables.table.separator = &quot;-&quot;
 
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area bmax &lt;#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the max total # of mobs in a room.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area (walk|no_walk) [room]&quot;, 30, &quot; &quot;) .. &quot;- Same as general command but for the current area.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area show&quot;, 30, &quot; &quot;) .. &quot;- Show current area data.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area list&quot;, 30, &quot; &quot;) .. &quot;- Lists all area names with data.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+local tbl
 
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp questadd &lt;mob#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Adds an action to execute when seeing mob #.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp questdel &lt;mob#&gt;&quot;, 30, &quot; &quot;) .. &quot;- Deletes all actions associated with mob #.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+tbl = jpf.tableTop(&quot;JP Area Commands&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.twoColumnRow(&quot;jp bash(on|off) &lt;mob&gt;&quot;, &quot;Sets whether to bash a mob. &lt;mob&gt; is the short description from info here.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp bash aggro (on|off) &lt;mob&gt;&quot;, &quot;Flags a mob as aggressive.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp bash team (on|off) &lt;mob&gt;&quot;, &quot;Flags a mob as teaming.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp bash priority &lt;#&gt; &lt;mob&gt;&quot;, &quot;Sets the bashing priority. Default is 50 for teaming mobs, 100 for aggro mobs and 0 for others. Highest number gets bashed first.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp bash max &lt;#&gt; &lt;mob&gt;&quot;, &quot;Will not bash in a room with more than # of mob.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp bash command &lt;cmd&gt;&quot;, &quot;Will send &lt;cmd&gt; {thing} when ready to bash.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.twoColumnRow(&quot;jp area bmax &lt;#&gt;&quot;, &quot;Will not bash in a room with more than # mobs set to bash.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp area (walk|no_walk) [room]&quot;, &quot;See the description in JP&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp area show&quot;, &quot;Shows all area data for the current area.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp area list&quot;, &quot;Shows a list of all areas for which you have data.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.twoColumnRow(&quot;jp questadd &lt;mob#&gt; &lt;action&gt;&quot;, &quot;Appends a new action to the list for mob. Mob# is the mob's number.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp questdel &lt;mob#&gt;&quot;, &quot;Deletes all actions for mob#.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.twoColumnRow(&quot;jp area msg &lt;ply&gt;&quot;, &quot;Sends the current area data to ply in a message.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.tableTop(&quot;&quot;)
 
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp area msg &lt;ply&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sends the current area data to another player via&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  in-game message.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-
-
-
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+jpf.echo(tbl)
+</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp area$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Custom Help</name>
-                    <script>JPTables.table.leftSize = 30
-JPTables.table.rightSize = 55
-JPTables.table.size = 90
+                    <script>local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
+
+JPTables.table.leftSize = 30
+JPTables.table.rightSize = size - 35
+JPTables.table.size = size
 JPTables.table.border = &quot;|&quot;
+JPTables.table.topBorder = &quot;-&quot;
 JPTables.table.separator = &quot;-&quot;
 
-jpf.echo(jpf.center(&quot;JP Custom Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+local tbl
 
-jpf.echo(jpf.twoColumnRow(&quot;jp custom create &lt;name&gt;&quot;, &quot;Creates a new custom.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom &lt;name&gt; (on|off)&quot;, &quot;Turns the custom on or off&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom show &lt;name&gt;&quot;, &quot;Shows details about the custom&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom set cond &lt;name&gt; &lt;cond&gt;&quot;,&quot;Set the activation condition for the custom.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom set act &lt;name&gt; &lt;act&gt;&quot;,&quot;Clears previous actions and sets the action to &lt;act&gt;.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom add act &lt;name&gt; [#] &lt;act&gt;&quot;,&quot;Adds an action to the list of actions. [#] optional, defaults to end.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom del act &lt;name&gt; [#]&quot;,&quot;Deletes an action. [#] optional, defaults to last.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom show act &lt;name&gt;&quot;,&quot;Shows the action list for &lt;name&gt;.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom show list &lt;name&gt;&quot;,&quot;Shows the list of items for &lt;name&gt;.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom add list &lt;name&gt; &lt;item&gt;&quot;,&quot;Adds &lt;item&gt; to the list for &lt;name&gt;.&quot;))
-jpf.echo(jpf.twoColumnRow(&quot;jp custom del list &lt;name&gt; [#]&quot;,&quot;Removes [#] from list. [#] optional, defaults to last item.&quot;))
+tbl = jpf.tableTop(&quot;JP Custom Commands&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom create &lt;name&gt;&quot;, &quot;Creates a new custom.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom &lt;name&gt; (on|off)&quot;, &quot;Turns the custom on or off&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom show &lt;name&gt;&quot;, &quot;Shows details about the custom&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom set cond &lt;name&gt; &lt;cond&gt;&quot;,&quot;Set the activation condition for the custom.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom set act &lt;name&gt; &lt;act&gt;&quot;,&quot;Clears previous actions and sets the action to &lt;act&gt;.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom add act &lt;name&gt; [#] &lt;act&gt;&quot;,&quot;Adds an action to the list of actions. [#] optional, defaults to end.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom del act &lt;name&gt; [#]&quot;,&quot;Deletes an action. [#] optional, defaults to last.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom show act &lt;name&gt;&quot;,&quot;Shows the action list for &lt;name&gt;.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom show list &lt;name&gt;&quot;,&quot;Shows the list of items for &lt;name&gt;.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom add list &lt;name&gt; &lt;item&gt;&quot;,&quot;Adds &lt;item&gt; to the list for &lt;name&gt;.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp custom del list &lt;name&gt; [#]&quot;,&quot;Removes [#] from list. [#] optional, defaults to last item.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.row(&quot;Still in testing, additional information and features forthcoming.&quot;, &quot;center&quot;)
+tbl = tbl .. jpf.tableTop(&quot;&quot;)
 
-
-
-jpf.echo(jpf.border(jpf.center(&quot;Still in testing, additional information forthcoming.&quot;, 88), 90, &quot;|&quot;) .. &quot;\n&quot;)
-
-
-
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+jpf.echo(tbl)
+</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp custom$</regex>
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Talk Help</name>
-                    <script>jpf.echo(jpf.center(&quot;JP Talk Commands&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+                    <script>local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
 
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jp password &lt;name&gt; &lt;password&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sets the encryption key for &lt;name&gt;. &lt;Name&gt; must set the&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  identical key for you for this to work.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;.&lt;name&gt; &lt;msg&gt;&quot;, 30, &quot; &quot;) .. &quot;- Sends an encrypted message to &lt;name&gt;. Password must be&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;&quot;, 30, &quot; &quot;) .. &quot;  set for &lt;name&gt;.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.border(&quot; &quot; .. jpf.left(&quot;jpet &lt;name&gt; &lt;msg&gt;&quot;, 30, &quot; &quot;) .. &quot;- Same as above.&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
+JPTables.table.leftSize = 30
+JPTables.table.rightSize = size - 35
+JPTables.table.size = size
+JPTables.table.border = &quot;|&quot;
+JPTables.table.topBorder = &quot;-&quot;
+JPTables.table.separator = &quot;-&quot;
 
+local tbl
 
-jpf.echo(jpf.border(&quot;&quot;, 90, &quot;|&quot;) .. &quot;\n&quot;)
-jpf.echo(jpf.center(&quot;&quot;, 90, &quot;-&quot;) .. &quot;\n&quot;)</script>
+tbl = jpf.tableTop(&quot;JP Talk Commands&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.twoColumnRow(&quot;jp password &lt;name&gt; &lt;password&gt;&quot;, &quot;Directly set the password for &lt;name&gt;.  &lt;Name&gt; must set the identical password for you.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp send key &lt;name&gt;&quot;,&quot;Begins a key exchange with &lt;name&gt; using weak Diffie-Hellman. Follow the on screen commands. Better than just telling each other the key in game.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jpet &lt;name&gt; &lt;msg&gt;&quot;, &quot;Sends an encrypted tell to &lt;name&gt;. Either password or key exchange must be done previously.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;.&lt;name&gt; &lt;msg&gt;&quot;, &quot;Same as above.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.tableTop(&quot;&quot;)
+
+jpf.echo(tbl)</script>
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp talk$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Overview</name>
+                    <script>local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
+
+JPTables.table.leftSize = 30
+JPTables.table.rightSize = size - 35
+JPTables.table.size = size
+JPTables.table.border = &quot;|&quot;
+JPTables.table.topBorder = &quot;-&quot;
+JPTables.table.separator = &quot;-&quot;
+
+local tbl
+
+tbl = jpf.tableTop(&quot;JP Engine Overview&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.row(&quot;Welcome to JP Engine! This is where a mini how-to will go describing how to get started.  Until then please use the JP command to see the command syntax.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.tableTop(&quot;&quot;)
+
+jpf.echo(tbl)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp help$</regex>
                 </Alias>
             </AliasGroup>
         </AliasGroup>
@@ -1982,8 +2213,8 @@ function JP_take_step()
 	--if not room_changing then
 	--echo(&quot;Going to: &quot;..going_to_room..&quot; Current: &quot;..currentRoom..&quot;.\n&quot;)
 	if JPTables.movement.going_to_room == JPTables.movement.currentRoom then
-		if List.isempty(JPTables.walkList) == false then
-			local step = List.popleft(JPTables.walkList)
+		if JPList.isempty(JPTables.walkList) == false then
+			local step = JPList.popleft(JPTables.walkList)
 			--send(step.dir)
 			mmp.gotoRoom(tonumber(step),nil)
 			JPTables.movement.room_changing = true
@@ -2564,7 +2795,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.15.7&quot;
+JPTables.version = &quot;0.15.8&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
@@ -4307,6 +4538,28 @@ function jpf.wordWrap(text, size, wrapOn)
 			
 end
 
+function jpf.tableTop(text)
+	local size = JPTables.table.size or 90
+	local topBorder = JPTables.table.topBorder or &quot;-&quot;
+
+	return jpf.center(text, size, topBorder) .. &quot;\n&quot;
+end
+
+function jpf.emptyRow()
+	local size = JPTables.table.size or 90
+	local border = JPTables.table.border or &quot;|&quot;
+	return jpf.border(&quot;&quot;, size, border) .. &quot;\n&quot;
+end
+
+function jpf.headingRow(text)
+	local size = JPTables.table.size or 90
+	local border = JPTables.table.border or &quot;|&quot;
+	local ret = jpf.border(jpf.center(text, size - 2, &quot; &quot;), size, border) .. &quot;\n&quot;
+	ret = ret ..jpf.border(jpf.center(string.rep(&quot;-&quot;, text:len()), size - 2, &quot; &quot;), size, border) .. &quot;\n&quot;
+
+	return ret
+end
+
 function jpf.twoColumnRow(leftText, rightText)
 	local leftSize = JPTables.table.leftSize or 30
 	local rightSize = JPTables.table.rightSize or 55
@@ -4336,9 +4589,39 @@ function jpf.twoColumnRow(leftText, rightText)
 		ret = ret .. jpf.border(row, size, border) .. &quot;\n&quot;
 
 	end
-
 	return ret
+end
 
+function jpf.row(text, align)
+
+	local size = JPTables.table.size or 90
+	local border = JPTables.table.border or &quot;|&quot;
+	if type(align) == &quot;string&quot; then
+		if align:lower() == &quot;center&quot; then
+			align = jpf.center
+		elseif align:lower() == &quot;left&quot; then
+			align = jpf.left
+		elseif align:lower() == &quot;right&quot; then
+			align = jpf.right
+		else
+			align = jpf.left
+		end
+	elseif type(align) == &quot;function&quot; then
+	else
+		align = jpf.left
+	end
+
+	local textSize = size - 4
+
+	local textWrap = jpf.wordWrap( text, textSize )
+
+	local i
+	local ret = &quot;&quot;
+
+	for i = 1, #textWrap do
+		ret = ret .. jpf.border(&quot; &quot;..align(textWrap[i], textSize), size, border) .. &quot;\n&quot;
+	end
+	return ret
 end</script>
                     <eventHandlerList/>
                 </Script>
