@@ -1204,6 +1204,19 @@ jpf.echo(&quot;Use JPET &quot;..string.upper(ply)..&quot; &lt;MSG&gt; or .&quot;
                     <packageName></packageName>
                     <regex>^jp finalize key (\w+)$</regex>
                 </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Reset Key</name>
+                    <script>ply = string.lower(matches[2])
+
+JPPlayerDB:del(ply, &quot;dh_y&quot;)
+JPPlayerDB:del(ply, &quot;dh_a&quot;)
+
+echo(&quot;Key data reset for &quot;..ply:title()..&quot;.\n&quot;)
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp reset key (\w+)$</regex>
+                </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
                 <name>Custom</name>
@@ -2799,7 +2812,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.16.0&quot;
+JPTables.version = &quot;0.16.1&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
