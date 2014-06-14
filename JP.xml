@@ -2438,7 +2438,7 @@ function JP_quest_now()
 					end
 
 				else
-					List.pushleft(JP_eqbalqueue, acts[act])
+					JPList.pushleft(JP_eqbalqueue, acts[act])
 					cecho(&quot;&lt;green:black&gt;Queued &quot;..acts[act]..&quot;&lt;reset&gt;\n&quot;)
 				--expandAlias(acts[act])
 				end
@@ -2812,7 +2812,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.16.1&quot;
+JPTables.version = &quot;0.16.3&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
