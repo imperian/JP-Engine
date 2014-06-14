@@ -253,7 +253,7 @@ deselect()
                     <colorTriggerFgColor>#000000</colorTriggerFgColor>
                     <colorTriggerBgColor>#000000</colorTriggerBgColor>
                     <regexCodeList>
-                        <string>(\w+) tells you, &quot;(!@\$([a-zA-Z0-9/=+]+)\$@!)&quot;</string>
+                        <string>(\w+) tells you, &quot;(!@\$([a-zA-Z0-9/=+]+)\$@!)&quot;$</string>
                     </regexCodeList>
                     <regexCodePropertyList>
                         <integer>1</integer>
@@ -668,7 +668,6 @@ if not key then echo(&quot;Password not set for &quot;..ply..&quot;\n&quot;);ret
 local enc_state = JPRC4_new(key)
 enc_state:generate(3072)
 local ciphertext = enc_state:cipher(matches[3])
-echo(&quot;hi\n&quot;)
 local cyphertext = JP_enc(ciphertext)
 
 cyphertext = &quot;@~!&quot;..cyphertext..&quot;!~@&quot;
@@ -689,7 +688,6 @@ if not key then echo(&quot;Password not set for &quot;..ply..&quot;\n&quot;);ret
 local enc_state = JPRC4_new(key)
 enc_state:generate(3072)
 local ciphertext = enc_state:cipher(matches[3])
-echo(&quot;hi\n&quot;)
 local cyphertext = JP_enc(ciphertext)
 
 cyphertext = &quot;@~!&quot;..cyphertext..&quot;!~@&quot;
@@ -2812,7 +2810,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.16.3&quot;
+JPTables.version = &quot;0.16.4&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
