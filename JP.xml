@@ -1768,18 +1768,24 @@ jpf.echo(tbl)</script>
                     <name>Overview</name>
                     <script>local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
 
-JPTables.table.leftSize = 30
-JPTables.table.rightSize = size - 35
+JPTables.table.leftSize = 5
+JPTables.table.rightSize = size - 10
 JPTables.table.size = size
 JPTables.table.border = &quot;|&quot;
 JPTables.table.topBorder = &quot;-&quot;
-JPTables.table.separator = &quot;-&quot;
+JPTables.table.separator = &quot;*&quot;
 
 local tbl
 
 tbl = jpf.tableTop(&quot;JP Engine Overview&quot;)
 tbl = tbl .. jpf.emptyRow()
-tbl = tbl .. jpf.row(&quot;Welcome to JP Engine! This is where a mini how-to will go describing how to get started.  Until then please use the JP command to see the command syntax.&quot;)
+tbl = tbl .. jpf.headingRow(&quot;Prerequisites&quot;)
+tbl = tbl .. jpf.row(&quot;In order to use JP Engine you will need to have the following things installed and up to date:&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;&quot;,&quot;GMCP data must be enabled. (Settings -&gt; General -&gt; Enable GMCP (restart requried)&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;&quot;,&quot;Mudlet mapper must be installed and up to date. (Settings -&gt; Mapper -&gt; Download)&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;&quot;,&quot;CONFIG WRAPWIDTH 0 is required for certain features such as encrypted tells and data transfers.&quot;)
+tbl = tbl .. jpf.emptyRow()
+tbl = tbl .. jpf.row(&quot;Please see the README.md file or https://github.com/imperian/JP-Engine for more detailed information on how to use the system.&quot;)
 tbl = tbl .. jpf.emptyRow()
 tbl = tbl .. jpf.tableTop(&quot;&quot;)
 
@@ -2151,6 +2157,34 @@ function JP_website_download_done(_, filename)
 end
 
 registerAnonymousEventHandler(&quot;sysDownloadDone&quot;, &quot;JP_website_download_done&quot;)</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>data send</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+function JP_special_alias(a, command)
+
+
+	-- For commands that require a gmcp update
+
+	local firstWordMatch = command:match(&quot;^%w+&quot;)
+	if firstWordMatch == &quot;wield&quot; then
+		tempTimer(1,[[sendGMCP(&quot;Char.Items.Inv&quot;);send(&quot;\n&quot;)]])
+	elseif firstWordMatch == &quot;unwield&quot; then
+		tempTimer(1,[[sendGMCP(&quot;Char.Items.Inv&quot;);send(&quot;\n&quot;)]])
+	end
+
+	JPTables.lastCommand = command
+
+end
+
+registerAnonymousEventHandler(&quot;sysDataSendRequest&quot;, &quot;JP_special_alias&quot;)</script>
                     <eventHandlerList/>
                 </Script>
             </ScriptGroup>
@@ -2810,7 +2844,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.16.4&quot;
+JPTables.version = &quot;0.16.5&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
