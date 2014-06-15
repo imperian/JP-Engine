@@ -183,7 +183,8 @@ i = 1
 item = {}
 
 while i &lt; #multimatches[3] do
-	item[multimatches[3][i+1]] = multimatches[3][i+1]
+	local ply = string.lower(multimatches[3][i+1])
+	item[ply] = multimatches[3][i+1]
 	--table.insert(item, multimatches[3][i+1])
 	i = i + 2
 end
@@ -2919,7 +2920,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.16.6&quot;
+JPTables.version = &quot;0.16.7&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
