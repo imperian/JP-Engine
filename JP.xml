@@ -168,6 +168,52 @@ end</script>
                         </regexCodePropertyList>
                     </Trigger>
                 </TriggerGroup>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="yes" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Ring Members</name>
+                    <script>
+
+--tempComplexRegexTrigger('name', regex, code to execute, multiline, foreground color, bg color, 
+--filter, match all, highlight foreground color, highlight background color, play sound file, fire length, line delta)
+
+--display(multimatches[3])
+
+local i, item
+
+i = 1
+item = {}
+
+while i &lt; #multimatches[3] do
+	item[multimatches[3][i+1]] = multimatches[3][i+1]
+	--table.insert(item, multimatches[3][i+1])
+	i = i + 2
+end
+
+JPTables.inRing = item
+
+--display(item)</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>3</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^Your ring has the following members:$</string>
+                        <string>^[-]+$</string>
+                        <string>(\w+)[,\.]</string>
+                        <string>^[-]+$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                        <integer>1</integer>
+                        <integer>1</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
             </TriggerGroup>
             <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
                 <name>Talking</name>
@@ -548,6 +594,26 @@ jpf.echo(&quot;Bashing will now execute: &quot;..matches[2]..&quot; &lt;thing&gt
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp set bash command (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Ring members</name>
+                    <script>local toggle
+
+if matches[3] == &quot;on&quot; then toggle = &quot;yes&quot; else toggle = &quot;no&quot; end
+
+JPSettingsDB:set(&quot;ring&quot;, matches[2], toggle)
+
+if toggle == &quot;yes&quot; then
+	jpf.echo(&quot;Will &quot;..matches[2]..&quot; with members of your ring now.\n&quot;)
+	jpf.echo(&quot;PLEASE NOTE: You must use the command RING MEMBERS to update who is in your ring.\n&quot;)
+	jpf.echo(&quot;Displaing this information now:\n&quot;)
+	send(&quot;ring members&quot;)
+else
+	jpf.echo(&quot;Will not &quot;..matches[2]..&quot; with members of your ring (unless they are added individually).\n&quot;)
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp set ring (bash|quest) (on|off)$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -1646,6 +1712,7 @@ tbl = tbl .. jpf.twoColumnRow(&quot;jp set quest (on|off)&quot;, &quot;Turns aut
 tbl = tbl .. jpf.twoColumnRow(&quot;jp set custom (on|off)&quot;, &quot;Turns custom engine on/off.&quot;)
 tbl = tbl .. jpf.twoColumnRow(&quot;jp set walk (on|off)&quot;, &quot;Turns autowalking on/off.&quot;)
 tbl = tbl .. jpf.twoColumnRow(&quot;jp set all (on|off)&quot;, &quot;Turns everything on/off.&quot;)
+tbl = tbl .. jpf.twoColumnRow(&quot;jp set ring (bash|quest) (on|off)&quot;, &quot;Sets whether you will bash/quest with ring members in the room.&quot;)
 tbl = tbl .. jpf.twoColumnRow(&quot;jp set color &lt;color&gt;&quot;, &quot;Sets the default color for JP Engine to use. Must be a valid mudlet color.&quot;)
 tbl = tbl .. jpf.twoColumnRow(&quot;jp set walk &lt;depth&gt;&quot;, &quot;Sets the path recursion max depth. Default is 100.&quot;)
 tbl = tbl .. jpf.twoColumnRow(&quot;jp set wordwrap &lt;size&gt;&quot;, &quot;Sets the number of columns to wrap at. Must be 50-100, default is 90&quot;)
@@ -1967,14 +2034,22 @@ function JP_onPrompt()
 		quest = 0,
 		total = 0
 	}
+
+	local ringBash, ringQuest = JPSettingsDB:get(&quot;ring&quot;,&quot;bash&quot;), JPSettingsDB:get(&quot;ring&quot;,&quot;quest&quot;)
+	if not ringBash then ringBash = &quot;no&quot; end
+	if not ringQuest then ringQuest = &quot;no&quot; end
 	--get the number of players in the room
 	for ply, data in pairs(JPTables.inRoom.Players) do
 		ply = string.lower(ply)
 		if JPPlayerDB:get(ply,&quot;bash_with&quot;) ~= &quot;yes&quot; then
-			count.bash = count.bash + 1
+			if ringBash == &quot;no&quot; or not JPTables.inRing[ply] then
+				count.bash = count.bash + 1
+			end
 		end
 		if JPPlayerDB:get(ply, &quot;quest_with&quot;) ~= &quot;yes&quot; then
-			count.quest = count.quest + 1
+			if ringQuest == &quot;no&quot; or not JPTables.inRing[ply] then
+				count.quest = count.quest + 1
+			end
 		end
 		count.total = count.total + 1
 	end
@@ -2844,7 +2919,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.16.5&quot;
+JPTables.version = &quot;0.16.6&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
@@ -2863,6 +2938,7 @@ JPTables.attacking = JPTables.attacking or {}
 JPTables.stats = JPTables.stats or {}
 JPTables.custom = JPTables.custom or {}
 JPTables.table = JPTables.table or {}
+JPTables.inRing = JPTables.inRing or {}
 </script>
                     <eventHandlerList/>
                 </Script>
