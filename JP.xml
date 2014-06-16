@@ -491,7 +491,7 @@ end</script>
                 <regexCodePropertyList/>
                 <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
                     <name>Not here</name>
-                    <script>if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;array&quot; then
+                    <script>if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;table&quot; then
 	if JPTables.group.iAmBashing and JPTables.group.bashList[1] == JPTables.group.iAmBashing then
 		table.remove(JPTables.group.bashList, 1)
 		send(&quot;rt [JP] Bash remove: &quot; .. tostring(JPTables.group.iAmBashing))
@@ -525,7 +525,7 @@ end</script>
                 </Trigger>
                 <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
                     <name>Bash Remove</name>
-                    <script>if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;array&quot; then
+                    <script>if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;table&quot; then
 	if JPTables.group.bashList[1] == matches[2] then
 		table.remove(JPTables.group.bashList, 1)
 		JPTables.group.iAmBashing = nil
@@ -599,9 +599,8 @@ end
                     <name>Bash Join Group</name>
                     <script>local ply = string.lower(matches[2])
 local lead = string.lower(matches[3])
-
 if JPTables.group.groupBashing == true and JPTables.group.isLeader == &quot;yes&quot; then
-	if not table.contains(JPTable.group.members, ply) then
+	if table.contains(JPTables.group.members, ply) == false then
 		table.insert(JPTables.group.members, ply)
 	end
 end
@@ -628,7 +627,8 @@ end
                     <script>local ply = string.lower(matches[2])
 
 if JPTables.group.groupBashing == true and JPTables.group.isLeader == &quot;yes&quot; then
-	if table.contains(JPTable.group.members, ply) and not table.contains(JPTables.group.ready) then
+	JPTables.group.ready = JPTables.group.ready or {}
+	if table.contains(JPTables.group.members, ply) and not table.contains(JPTables.group.ready) then
 		table.insert(JPTables.group.ready, ply)
 	end
 end
@@ -702,7 +702,7 @@ end</script>
                     <colorTriggerFgColor>#000000</colorTriggerFgColor>
                     <colorTriggerBgColor>#000000</colorTriggerBgColor>
                     <regexCodeList>
-                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Ready to move?&quot;$</string>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Ready to move\?&quot;$</string>
                     </regexCodeList>
                     <regexCodePropertyList>
                         <integer>1</integer>
@@ -713,11 +713,11 @@ end</script>
                     <script>local ply = string.lower(matches[2])
 
 if JPTables.group.groupBashing == true and JPTables.group.isLeader == &quot;yes&quot; then
-	if table.contains(JPTable.group.members, ply) then
+	if table.contains(JPTables.group.members, ply) then
 		table.remove(JPTables.group.members, table.index_of(JPTables.group.members,ply))
 	end
 elseif JPTables.group.groupBashing == true and JPTables.group.leader == ply then
-	jpf.echo(&quot;Your bashing group has been dissolved by &quot;..ply:title()..&quot;.\n&quot;)
+	jpf.echo(&quot;\nYour bashing group has been dissolved by &quot;..ply:title()..&quot;.\n&quot;)
 	JPTables.group = {}
 end
 </script>
@@ -735,7 +735,7 @@ end
                         <string>^\(Ring\): (\w+) says, &quot;\[JP\] Stopping bashing\.&quot;$</string>
                     </regexCodeList>
                     <regexCodePropertyList>
-                        <integer>0</integer>
+                        <integer>1</integer>
                     </regexCodePropertyList>
                 </Trigger>
             </TriggerGroup>
@@ -1221,10 +1221,11 @@ send(&quot;rt [JP] I formed a new bashing group. Join with JP BASH GROUP JOIN to
 	return
 end
 
+local leader = JPTables.group.pendingJoin
 JPTables.group = {}
 JPTables.group.isLeader = &quot;no&quot;
 JPTables.group.members = {}
-JPTables.group.leader = JPTables.group.pendingJoin
+JPTables.group.leader = leader
 JPTables.group.pendingJoin = nil
 
 JPTables.group.groupBashing = true
@@ -1237,7 +1238,7 @@ send(&quot;rt [JP] Started bashing with &quot;..JPTables.group.leader:title()..&
                 </Alias>
                 <Alias isActive="yes" isFolder="no">
                     <name>Quit Bashing Group</name>
-                    <script>if not JPTables.group.leader or not JPTables.group.groupBashing then
+                    <script>if not JPTables.group.groupBashing then
 	jpf.echo(&quot;You aren't bashing with a group.\n&quot;)
 	return
 end
@@ -2382,6 +2383,11 @@ registerAnonymousEventHandler(&quot;gmcp.Char.Vitals&quot;, &quot;JP_vitals_upda
 function JP_onPrompt()
 	local eqbal, prone, stun
 
+	if JPTables.group.groupBashing == true then
+		JPTables.group.readyToMove = &quot;no&quot;
+	end
+		
+
 	if JPTables.Vitals.bal == nil then 
 		if JPTables.stats.bal == &quot;1&quot; and JPTables.stats.eq == &quot;1&quot; then eqbal = true else eqbal = false end
 	else
@@ -2477,18 +2483,26 @@ function JP_onPrompt()
 	-- Group walking
 	if JPTables.group.groupBashing == true then
 		if JPTables.group.isLeader == &quot;yes&quot; then
-			if not JPTables.group.ready then 
-				JPTables.group.ready = {}
-				send(&quot;rt [JP] Ready to move?&quot;)
-			end
+			if JPSettingsDB:get(&quot;active&quot;, &quot;walk&quot;) == &quot;yes&quot; and 
+				(not JPTables.movement.walkDelay or JPTables.movement.walkDelay == &quot;no&quot;) and
+				JPList.isempty(JPTables.walkList) == false then 
+				if type(JPTables.group.ready) == &quot;nil&quot; and JPTables.group.readyMessage ~= &quot;sent&quot; then 
+					JPTables.group.ready = {}
+					JPTables.group.readyMessage = &quot;sent&quot;
+					send(&quot;rt [JP] Ready to move?&quot;)
+					--echo(&quot;Die.\n&quot;)
+					return
+				end
 
-			local isect = table.n_intersection(JPTables.group.members, JPTables.group.ready)
-			if #isect == #JPTables.group.members then
-				JPTables.group.ready = nil
-				--jpf.echo(&quot;Moving!\n&quot;)
-			else
-				--Waiting
-				return
+				local isect = table.n_intersection(JPTables.group.members, JPTables.group.ready)
+				if #isect &gt; 0 and #isect == #JPTables.group.members then
+					JPTables.group.ready = nil
+					JPTables.group.readyMessage = nil
+					--jpf.echo(&quot;Moving!\n&quot;)
+				else
+					--Waiting
+					return
+				end
 			end
 		else
 			--User ready to walk
@@ -2787,7 +2801,7 @@ end
 function JP_bash_now()
 	local bashCommand
 
-	if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;array&quot; then
+	if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;table&quot; then
 		local bash_here = JPTables.group.bashList[1]
 		if bash_here then
 			bashCommand = JPSettingsDB:get(&quot;bash&quot;, &quot;command&quot;)
