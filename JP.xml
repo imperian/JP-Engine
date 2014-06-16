@@ -474,6 +474,271 @@ end</script>
                     </regexCodePropertyList>
                 </Trigger>
             </TriggerGroup>
+            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>Bashing</name>
+                <script></script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList/>
+                <regexCodePropertyList/>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Not here</name>
+                    <script>if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;array&quot; then
+	if JPTables.group.iAmBashing and JPTables.group.bashList[1] == JPTables.group.iAmBashing then
+		table.remove(JPTables.group.bashList, 1)
+		send(&quot;rt [JP] Bash remove: &quot; .. tostring(JPTables.group.iAmBashing))
+		JPTables.group.iAmBashing = nil
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^You do not see that individual here.$</string>
+                        <string>^Ahh, I am truly sorry, but I do not see anyone by that name here.$</string>
+                        <string>^I do not recognize anything called that here.$</string>
+                        <string>^Nothing can be seen here by that name.$</string>
+                        <string>^You detect nothing here by that name.$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                        <integer>1</integer>
+                        <integer>1</integer>
+                        <integer>1</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash Remove</name>
+                    <script>if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;array&quot; then
+	if JPTables.group.bashList[1] == matches[2] then
+		table.remove(JPTables.group.bashList, 1)
+		JPTables.group.iAmBashing = nil
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): \w+ says, &quot;\[JP\] Bash Remove: (\d+)\.&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash List</name>
+                    <script>local ply = string.lower(matches[2])
+
+if JPTables.group.groupBashing == true and JPTables.group.leader == ply then
+	local list = matches[3]:sub(2,-1)
+	list = list:split(&quot;, &quot;)
+	JPTables.group.bashList = list
+end
+</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Bash List:((?: \d+,)* \d+)\.&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash New Group</name>
+                    <script>JPTables.group.pendingJoin = string.lower(matches[2])</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] I formed a new bashing group. Join with JP BASH GROUP JOIN to come along\.&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash Join Group</name>
+                    <script>local ply = string.lower(matches[2])
+local lead = string.lower(matches[3])
+
+if JPTables.group.groupBashing == true and JPTables.group.isLeader == &quot;yes&quot; then
+	if not table.contains(JPTable.group.members, ply) then
+		table.insert(JPTables.group.members, ply)
+	end
+end
+</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Started bashing with (\w+)\.&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash Ready to Move</name>
+                    <script>local ply = string.lower(matches[2])
+
+if JPTables.group.groupBashing == true and JPTables.group.isLeader == &quot;yes&quot; then
+	if table.contains(JPTable.group.members, ply) and not table.contains(JPTables.group.ready) then
+		table.insert(JPTables.group.ready, ply)
+	end
+end
+</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Ready to move\.&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash Moving</name>
+                    <script>local ply = string.lower(matches[2])
+
+if JPTables.group.groupBashing == true and JPTables.group.leader == ply then
+
+	JPTables.group.waitingForYou = nil
+	JPTables.group.readyToMove = nil
+	JPTables.group.bashList = nil
+	JPTables.group.iAmBashing = nil
+
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Moving\.&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash Ready to Move?</name>
+                    <script>local ply = string.lower(matches[2])
+
+if JPTables.group.groupBashing == true and JPTables.group.leader == ply then
+
+	if JPTables.group.readyToMove == &quot;yes&quot; then
+		send(&quot;rt [JP] Ready to move.&quot;)
+	else
+		JPTables.group.waitingForYou = &quot;yes&quot;
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Ready to move?&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Bash Leave Group</name>
+                    <script>local ply = string.lower(matches[2])
+
+if JPTables.group.groupBashing == true and JPTables.group.isLeader == &quot;yes&quot; then
+	if table.contains(JPTable.group.members, ply) then
+		table.remove(JPTables.group.members, table.index_of(JPTables.group.members,ply))
+	end
+elseif JPTables.group.groupBashing == true and JPTables.group.leader == ply then
+	jpf.echo(&quot;Your bashing group has been dissolved by &quot;..ply:title()..&quot;.\n&quot;)
+	JPTables.group = {}
+end
+</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^\(Ring\): (\w+) says, &quot;\[JP\] Stopping bashing\.&quot;$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>0</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+            </TriggerGroup>
         </TriggerGroup>
     </TriggerPackage>
     <TimerPackage>
@@ -935,6 +1200,112 @@ jpf.echo(jpf.tableTop(&quot;&quot;))
                     <command></command>
                     <packageName></packageName>
                     <regex>^jp area list$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Start Bashing Group</name>
+                    <script>JPTables.group = {}
+JPTables.group.isLeader = &quot;yes&quot;
+JPTables.group.members = {}
+
+JPTables.group.groupBashing = true
+
+send(&quot;rt [JP] I formed a new bashing group. Join with JP BASH GROUP JOIN to come along.&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp bash group start$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Join Bashing Group</name>
+                    <script>if not JPTables.group.pendingJoin then
+	jpf.echo(&quot;There isn't a group to join.\n&quot;)
+	return
+end
+
+JPTables.group = {}
+JPTables.group.isLeader = &quot;no&quot;
+JPTables.group.members = {}
+JPTables.group.leader = JPTables.group.pendingJoin
+JPTables.group.pendingJoin = nil
+
+JPTables.group.groupBashing = true
+
+jpf.echo(&quot;You have joined &quot;..JPTables.group.leader:title()..&quot;'s bashing group. Make sure to FOLLOW &quot;..JPTables.group.leader:upper()..&quot; to stay together.\n&quot;)
+send(&quot;rt [JP] Started bashing with &quot;..JPTables.group.leader:title()..&quot;\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp bash group join$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Quit Bashing Group</name>
+                    <script>if not JPTables.group.leader or not JPTables.group.groupBashing then
+	jpf.echo(&quot;You aren't bashing with a group.\n&quot;)
+	return
+end
+
+send(&quot;rt [JP] Stopping bashing.&quot;)
+
+JPTables.group = {}
+
+jpf.echo(&quot;You have quit bashing with the group.\n&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp bash group quit$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>Ditch Bashing Group Member</name>
+                    <script>if JPTables.group.isLeader ~= &quot;yes&quot; then
+	jpf.echo(&quot;You are not leading a bashing group.\n&quot;)
+	return
+end
+
+local ply = string.lower(matches[2])
+
+
+if table.contains(JPTables.group.members, ply) then
+	table.remove(JPTables.group.members, table.index_of(JPTables.group.members,ply))
+	jpf.echo(&quot;You have removed &quot;..ply:title()..&quot; from your group.\n&quot;)
+else
+	jpf.echo(ply:title()..&quot; is not in the group.\n&quot;)
+end
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp bash group ditch (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>List Bashing Group Members</name>
+                    <script>if JPTables.group.isLeader ~= &quot;yes&quot; then
+	jpf.echo(&quot;You are not leading a bashing group.\n&quot;)
+	return
+end
+
+local i, v
+local ready = JPTables.group.ready or {}
+
+local size = tonumber(JPSettingsDB:get(&quot;display&quot;, &quot;wordwrap&quot;)) or 90
+
+JPTables.table.leftSize = 30
+JPTables.table.rightSize = size - 35
+JPTables.table.size = size
+JPTables.table.border = &quot;*&quot;
+JPTables.table.topBorder = &quot;*&quot;
+JPTables.table.separator = &quot;-&quot;
+
+jpf.echo(jpf.tableTop(&quot;Members in your Bashing Group&quot;))
+
+for i,v in ipairs(JPTables.group.members) do
+	if table.contains(ready, v) then
+		jpf.echo(&quot;[&quot;..jpf.right(tostring(i), 3, &quot; &quot;)..&quot;] &quot; .. jpf.left(v, 15, &quot; &quot;) .. &quot; (Ready to Move)&quot; .. &quot;\n&quot;)
+	else
+		jpf.echo(&quot;[&quot;..jpf.right(tostring(i), 3, &quot; &quot;)..&quot;] &quot; .. jpf.left(v, 15, &quot; &quot;) .. &quot; (Not Ready to Move)&quot; .. &quot;\n&quot;)
+	end
+end
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp bash group list$</regex>
                 </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -2103,11 +2474,41 @@ function JP_onPrompt()
 		return
 	end
 
+	-- Group walking
+	if JPTables.group.groupBashing == true then
+		if JPTables.group.isLeader == &quot;yes&quot; then
+			if not JPTables.group.ready then 
+				JPTables.group.ready = {}
+				send(&quot;rt [JP] Ready to move?&quot;)
+			end
+
+			local isect = table.n_intersection(JPTables.group.members, JPTables.group.ready)
+			if #isect == #JPTables.group.members then
+				JPTables.group.ready = nil
+				--jpf.echo(&quot;Moving!\n&quot;)
+			else
+				--Waiting
+				return
+			end
+		else
+			--User ready to walk
+			if JPTables.group.waitingForYou == &quot;yes&quot; then
+				send(&quot;rt [JP] Ready to move.&quot;)
+				JPTables.group.waitingForYou = nil
+				JPTables.group.readyToMove = nil
+			else
+				JPTables.group.readyToMove = &quot;yes&quot;
+			end
+			return
+		end
+	end
+
 	-- Walking Actions
 	if JPSettingsDB:get(&quot;active&quot;, &quot;walk&quot;) == &quot;yes&quot; and 
 		(not JPTables.movement.walkDelay or JPTables.movement.walkDelay == &quot;no&quot;) and
 		JPList.isempty(JPTables.walkList) == false then
 
+		if JPTables.group.groupBashing == true then send(&quot;rt [JP] Moving.&quot;) end
 		JP_take_step()
 		JPTables.movement.walkDelay=&quot;yes&quot;
 		tempTimer(.2, [[JPTables.movement.walkDelay=&quot;no&quot;;raiseEvent(&quot;JP_onPrompt&quot;)]])
@@ -2134,6 +2535,8 @@ function JP_new_room()
 		JPSettingsDB:set(&quot;quest&quot;,&quot;room_done&quot;, &quot;no&quot;)
 		JPTables.movement.oldRoom = JPTables.movement.currentRoom
 		JPTables.movement.room_changing = false
+		JPTables.group.newRoom = true
+		JPTables.group.bashList = nil
 		--JPTables.attacking.currentMob = nil
 	end
 end
@@ -2382,6 +2785,24 @@ end
 -------------------------------------------------
 
 function JP_bash_now()
+	local bashCommand
+
+	if JPTables.group.groupBashing == true and type(JPTables.group.bashList) == &quot;array&quot; then
+		local bash_here = JPTables.group.bashList[1]
+		if bash_here then
+			bashCommand = JPSettingsDB:get(&quot;bash&quot;, &quot;command&quot;)
+			if not bashCommand then bashCommand = &quot;attack&quot; end
+			JPTables.group.iAmBashing = bash_here
+			local hp, hpmax = tonumber(JPTables.Vitals.hp), tonumber(JPTables.Vitals.maxhp)
+
+			if 100 * hp / hpmax &gt; 90 then
+				send(bashCommand .. &quot; &quot;.. bash_here)
+			end
+			return true
+		end
+		if JPTables.group.isLeader ~= &quot;yes&quot; then return false end
+	end
+
 
 	local number, data, bash, room, area, mobDB
 	room = JPTables.movement.currentRoom
@@ -2449,7 +2870,20 @@ function JP_bash_now()
 					b = key
 				end
 			end
-		end	
+		end
+
+		if JPTables.group.isLeader == &quot;yes&quot; and JPTables.group.newRoom == true then
+			JPTables.group.newRoom = false
+			local list = {}
+			for key, value in jpf.spairs(pbash, function (t,a,b) return t[a] &lt; t[b] end) do
+				table.insert(list, key)
+			end
+			JPTables.group.bashList = nil
+			if #list &gt; 0 then
+				JPTables.group.bashList = list
+				send(&quot;rt [JP] Bash List: &quot;..table.concat(list, &quot;, &quot;))
+			end
+		end
 
 		for key, value in pairs(mob_totals) do
 			--echo(&quot;Key: &quot;..key..&quot; value: &quot;..value..&quot;\n&quot;)
@@ -2464,7 +2898,7 @@ function JP_bash_now()
 		end
 
 		local maxBash = JPAreaDB:get(area, &quot;s_bmax&quot;)
-		local bashCommand = JPSettingsDB:get(&quot;bash&quot;, &quot;command&quot;)
+		bashCommand = JPSettingsDB:get(&quot;bash&quot;, &quot;command&quot;)
 
 		if not bashCommand then bashCommand = &quot;attack&quot; end
 	
@@ -2920,7 +3354,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.16.7&quot;
+JPTables.version = &quot;0.17.1&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
@@ -2940,6 +3374,7 @@ JPTables.stats = JPTables.stats or {}
 JPTables.custom = JPTables.custom or {}
 JPTables.table = JPTables.table or {}
 JPTables.inRing = JPTables.inRing or {}
+JPTables.group = JPTables.group or {}
 </script>
                     <eventHandlerList/>
                 </Script>
@@ -4748,7 +5183,31 @@ function jpf.row(text, align)
 		ret = ret .. jpf.border(&quot; &quot;..align(textWrap[i], textSize), size, border) .. &quot;\n&quot;
 	end
 	return ret
-end</script>
+end
+
+function jpf.spairs(t, order)
+    -- collect the keys
+    local keys = {}
+    for k in pairs(t) do keys[#keys+1] = k end
+
+    -- if order function given, sort by it by passing the table and keys a, b,
+    -- otherwise just sort the keys 
+    if order then
+        table.sort(keys, function(a,b) return order(t, a, b) end)
+    else
+        table.sort(keys)
+    end
+
+    -- return the iterator function
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
+    end
+end
+</script>
                     <eventHandlerList/>
                 </Script>
             </ScriptGroup>
