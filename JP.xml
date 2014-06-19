@@ -945,6 +945,21 @@ echo(&quot;No_walk set to &quot;..toggle..&quot;\n&quot;)</script>
                     <packageName></packageName>
                     <regex>^jp(?: (area))? (no_walk|walk)(?: (\d+))?$</regex>
                 </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>New Room Command</name>
+                    <script>local cmd = matches[2]
+
+if cmd:lower() == &quot;none&quot; or cmd:lower() == &quot;nil&quot; or cmd:lower() == &quot;off&quot; then
+	JPSettingsDB:del(&quot;room&quot;, &quot;onNew&quot;)
+	jpf.echo(&quot;Room command cleared.\n&quot;)
+else
+	JPSettingsDB:set(&quot;room&quot;, &quot;onNew&quot;, matches[2])
+	jpf.echo(&quot;Will now perform the command \&quot;&quot; .. matches[2] ..&quot;\&quot; on new room entry.\n&quot;)
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp room command (.+)$</regex>
+                </Alias>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
                 <name>Players</name>
@@ -2235,6 +2250,26 @@ jpf.echo(tbl)</script>
                     <regex>^jp help$</regex>
                 </Alias>
             </AliasGroup>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Debugging</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^jp debug table (\w+) (\S+)$</name>
+                    <script>local ret = JPTables[matches[3]]
+local ply = string.lower(matches[2])
+
+send(&quot;tell &quot;..ply..&quot; &quot;..yajl.to_string(ret))
+
+
+</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^jp debug table (\w+) (\S+)$</regex>
+                </Alias>
+            </AliasGroup>
         </AliasGroup>
     </AliasPackage>
     <ActionPackage/>
@@ -2552,6 +2587,10 @@ function JP_new_room()
 		JPTables.group.newRoom = true
 		JPTables.group.bashList = nil
 		--JPTables.attacking.currentMob = nil
+		local onNew = JPSettingsDB:get(&quot;room&quot;, &quot;onNew&quot;)
+
+		if onNew then expandAlias(onNew) end
+		
 	end
 end
 
@@ -3368,7 +3407,7 @@ end
 -------------------------------------------------
 
 JPTables = JPTables or {}
-JPTables.version = &quot;0.17.1&quot;
+JPTables.version = &quot;0.17.2&quot;
 JPTables.inRoom = JPTables.inRoom or {}
 JPTables.inRoom.Players = JPTables.inRoom.Players or {}
 JPTables.inRoom.Replicas = JPTables.inRoom.Replicas or {}
